@@ -1,0 +1,2 @@
+# Keep in sync with ../.eslintignore. ESLint can only use 1 .eslintignore
+/build/

@@ -1,0 +1,216 @@
+name: Build
+
+on: [push]
+
+env:
+  CI: true
+
+jobs:
+  prepare:
+    name: 'Prepare'
+    runs-on: ubuntu-latest
+    env:
+      YARN_CACHE_FOLDER: .yarn-cache
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/cache@v1
+        with:
+          path: .yarn-cache
+          key: ${{ runner.OS }}-yarn-cache-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.OS }}-yarn-cache-
+      - run: yarn --frozen-lockfile
+      - run: tar -czf dependencies.tar.gz node_modules */node_modules
+      - uses: actions/upload-artifact@v1
+        with:
+          name: dependencies
+          path: dependencies.tar.gz
+
+  # TODO: Use artifacts to share cache and node_modules across jobs. GH is updating artifact action soon to make this
+  #  easier (https://github.com/actions/upload-artifact/issues/7#issuecomment-566114993), and cache action multiple path
+  #  support is popular (https://github.com/actions/cache/issues/16)
+
+  backend-validate-types:
+    needs: [prepare]
+    name: '[BACK] Typecheck'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/download-artifact@v1
+        with:
+          name: dependencies
+          path: .
+      - run: tar -xzf dependencies.tar.gz
+      - run: yarn typecheck
+        working-directory: backend
+  backend-lint:
+    needs: [prepare]
+    name: '[BACK] Lint'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/download-artifact@v1
+        with:
+          name: dependencies
+          path: .
+      - run: tar -xzf dependencies.tar.gz
+      - run: yarn lint
+        working-directory: backend
+  backend-build:
+    needs: [prepare]
+    name: '[BACK] Build'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/download-artifact@v1
+        with:
+          name: dependencies
+          path: .
+      - run: tar -xzf dependencies.tar.gz
+      - run: yarn build
+        working-directory: backend
+      - run: tar -czf backend.tar.gz backend/build
+      - uses: actions/upload-artifact@v1
+        with:
+          name: backend-build
+          path: backend.tar.gz
+
+  frontend-validate-types:
+    needs: [prepare]
+    name: '[FRONT] Typecheck'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/download-artifact@v1
+        with:
+          name: dependencies
+          path: .
+      - run: tar -xzf dependencies.tar.gz
+      - run: yarn typecheck
+        working-directory: frontend
+  frontend-tests:
+    needs: [prepare]
+    name: '[FRONT] Tests'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/download-artifact@v1
+        with:
+          name: dependencies
+          path: .
+      - run: tar -xzf dependencies.tar.gz
+      - run: yarn test --passWithNoTests
+        working-directory: frontend
+  frontend-lint:
+    needs: [prepare]
+    name: '[FRONT] Lint'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/download-artifact@v1
+        with:
+          name: dependencies
+          path: .
+      - run: tar -xzf dependencies.tar.gz
+      - run: yarn lint
+        working-directory: frontend
+  frontend-build:
+    needs: [prepare]
+    name: '[FRONT] Build'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/download-artifact@v1
+        with:
+          name: dependencies
+          path: .
+      - run: tar -xzf dependencies.tar.gz
+      - run: yarn build
+        working-directory: frontend
+      - run: tar -czf frontend.tar.gz frontend/build
+      - uses: actions/upload-artifact@v1
+        with:
+          name: frontend-build
+          path: frontend.tar.gz
+
+  docker-image:
+    needs:
+      [
+        prepare,
+        backend-validate-types,
+        backend-build,
+        frontend-validate-types,
+        frontend-build,
+      ]
+    name: 'Publish Docker image'
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v1
+        with:
+          name: dependencies
+          path: .
+      - run: tar -xzf dependencies.tar.gz
+      - uses: actions/download-artifact@v1
+        with:
+          name: backend-build
+          path: .
+      - run: tar -xzf backend.tar.gz
+      - uses: actions/download-artifact@v1
+        with:
+          name: frontend-build
+          path: .
+      - run: tar -xzf frontend.tar.gz
+      # Remove files we no longer need to speed up sending context to Docker
+      - run: rm dependencies.tar.gz backend.tar.gz frontend.tar.gz
+      # Remove artifacts to avoid hitting GitHub's cap
+      # Source: https://github.com/actions/upload-artifact/issues/5#issuecomment-565963170
+      - name: create empty directory
+        run: mkdir empty.d
+      - name: 'truncate cache: dependencies'
+        uses: actions/upload-artifact@v1
+        with:
+          name: dependencies
+          path: empty.d
+      - name: 'truncate cache: backend-build'
+        uses: actions/upload-artifact@v1
+        with:
+          name: backend-build
+          path: empty.d
+      - name: 'truncate cache: frontend-build'
+        uses: actions/upload-artifact@v1
+        with:
+          name: frontend-build
+          path: empty.d
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@2.11
+        with:
+          name: martijnhols/my-project
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+# TODO: Sentry releases https://blog.sentry.io/2019/12/17/using-github-actions-to-create-sentry-releases

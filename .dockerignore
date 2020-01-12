@@ -1,0 +1,8 @@
+# Unused files
+.docker*
+Docker*
+*.md
+# .git is very slow and we don't need it for anything
+.git
+.git*
+.editorconfig

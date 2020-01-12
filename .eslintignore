@@ -1,0 +1,7 @@
+# Keep in sync with backend/.eslintignore. ESLint can only use 1 .eslintignore
+/backend/build/
+/backend/frontend/
+/backend/node_modules/
+# Keep in sync with frontend/.eslintignore. ESLint can only use 1 .eslintignore
+/frontend/build/
+/frontend/node_modules/

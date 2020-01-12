@@ -1,0 +1,8 @@
+# Keep in sync with backend/.prettierignore. Prettier can only use 1 .prettierignore
+/backend/build/
+/backend/frontend/
+/backend/node_modules/
+# Keep in sync with frontend/.prettierignore. Prettier can only use 1 .prettierignore
+/frontend/build/
+/frontend/node_modules/
+/frontend/src/locales/_build/

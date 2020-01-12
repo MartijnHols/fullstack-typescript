@@ -1,0 +1,13 @@
+{
+  "appointment.connect": "Verbinden",
+  "appointment.subject": "Over",
+  "appointment.title": "Afspraak",
+  "clientOverview.actions": "Acties",
+  "dossier.title": "Jouw dossier",
+  "login.heading": "Demo-omgeving",
+  "login.userTypeSelection.client": "Cliënt",
+  "login.userTypeSelection.heading": "Ik ben een:",
+  "login.userTypeSelection.professional": "Zorgprofessional",
+  "room.muteSelf": "Dempen",
+  "room.waitingForConnection": "Wachten op verbinding..."
+}

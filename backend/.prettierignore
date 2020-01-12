@@ -1,0 +1,4 @@
+# Keep in sync with ../.prettierignore. Prettier can only use 1 .prettierignore
+/build/
+/frontend/
+/node_modules/

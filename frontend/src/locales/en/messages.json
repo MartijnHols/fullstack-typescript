@@ -1,0 +1,13 @@
+{
+  "appointment.connect": "Connect",
+  "appointment.subject": "About",
+  "appointment.title": "Appointment",
+  "clientOverview.actions": "Actions",
+  "dossier.title": "Your dossier",
+  "login.heading": "Demo environment",
+  "login.userTypeSelection.client": "Client",
+  "login.userTypeSelection.heading": "I am a:",
+  "login.userTypeSelection.professional": "Professional",
+  "room.muteSelf": "Mute self",
+  "room.waitingForConnection": "Waiting for connection..."
+}

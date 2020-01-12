@@ -1,0 +1,53 @@
+{
+  "name": "@fullstack-typescript/fullstack-typescript",
+  "author": "Martijn Hols <git@martijnhols.nl>",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "2.x",
+    "@typescript-eslint/parser": "2.x",
+    "babel-eslint": "10.x",
+    "concurrently": "^5.0.0",
+    "eslint": "6.x",
+    "eslint-config-react-app": "^5.1.0",
+    "eslint-plugin-flowtype": "3.x",
+    "eslint-plugin-import": "2.x",
+    "eslint-plugin-jsx-a11y": "6.x",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "7.x",
+    "eslint-plugin-react-hooks": "1.x",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.5.0",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.3"
+  },
+  "scripts": {
+    "build": "concurrently \"yarn workspace @fullstack-typescript/backend build\" \"yarn workspace @fullstack-typescript/frontend build\"",
+    "lint": "yarn --silent lint:code && yarn --silent lint:rest",
+    "lint:code": "yarn --silent lint:code:specific .",
+    "lint:code:specific": "eslint --format stylish -c .prettier.eslintrc.json --ext .js,.jsx,.ts,.tsx",
+    "lint:rest": "yarn --silent lint:rest:specific '**/*.{json,md,css,scss,graphql,yml}'",
+    "lint:rest:specific": "prettier --check",
+    "lint:fix": "yarn --silent lint:code --fix && prettier --write '**/*.{json,md,css,scss,graphql,yml}'",
+    "test": "yarn workspaces run test",
+    "typecheck": "yarn workspaces run typecheck",
+    "precommit": "yarn typecheck && yarn lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "yarn --silent lint:code:specific"
+    ],
+    "*.{json,md,css,scss,graphql,yml}": [
+      "yarn --silent lint:rest:specific"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn --silent precommit"
+    }
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+}
