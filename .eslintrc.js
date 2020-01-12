@@ -10,6 +10,14 @@
 // TODO: Move this to its own repository to make this more reusable and greatly
 //  reduce the amount of packages in the package.json.
 
+// Only run Prettier on the CLI and in CI. This way IDEs can do good linting and
+// show inline issues without Prettier warnings everywhere. We do want Prettier
+// included in the linting rather than as separate output because the formatting
+// of eslint is more readable, and they both indicate code issues that need to
+// be fixed. We just don't want Prettier to put a red underline underneath all
+// code not just Prettier formatted.
+const ENABLE_PRETTIER = process.env.PRETTIER === 'true'
+
 module.exports = {
   root: true,
   extends: [
@@ -23,6 +31,11 @@ module.exports = {
     'plugin:@typescript-eslint/eslint-recommended',
     // https://github.com/typescript-eslint/typescript-eslint/blob/master/packages/eslint-plugin/src/configs/recommended.json
     'plugin:@typescript-eslint/recommended',
+    // We enable the prettier plugin even if ENABLE_PRETTIER is false since it
+    // also disables rules that would conflict with Prettier. We need these
+    // overrides even if we're ignoring Prettier rule problems.
+    // https://prettier.io/docs/en/integrating-with-linters.html#recommended-configuration
+    'plugin:prettier/recommended',
   ],
   rules: {
     // region Syntax
@@ -42,6 +55,8 @@ module.exports = {
     // for (let i = 0; i < arr.length; i++) -> for (let i = 0; i < arr.length; i += 1)
     // NOTE: For the last one, prefer arr.forEach(func)/map/reduce instead.
     'no-plusplus': 'warn',
+
+    // TODO: Rule to encourage foreach/map/reduce over for
 
     // endregion
 
@@ -71,5 +86,7 @@ module.exports = {
     'react/no-unescaped-entities': 0,
 
     // endregion
+
+    'prettier/prettier': ENABLE_PRETTIER ? 'error' : 'off',
   },
 }
