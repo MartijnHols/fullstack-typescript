@@ -156,61 +156,61 @@ jobs:
         with:
           name: frontend-build
           path: frontend.tar.gz
-
-  docker-image:
-    needs:
-      [
-        prepare,
-        backend-validate-types,
-        backend-build,
-        frontend-validate-types,
-        frontend-build,
-      ]
-    name: 'Publish Docker image'
-    runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v1
-        with:
-          name: dependencies
-          path: .
-      - run: tar -xzf dependencies.tar.gz
-      - uses: actions/download-artifact@v1
-        with:
-          name: backend-build
-          path: .
-      - run: tar -xzf backend.tar.gz
-      - uses: actions/download-artifact@v1
-        with:
-          name: frontend-build
-          path: .
-      - run: tar -xzf frontend.tar.gz
-      # Remove files we no longer need to speed up sending context to Docker
-      - run: rm dependencies.tar.gz backend.tar.gz frontend.tar.gz
-      # Remove artifacts to avoid hitting GitHub's cap
-      # Source: https://github.com/actions/upload-artifact/issues/5#issuecomment-565963170
-      - name: create empty directory
-        run: mkdir empty.d
-      - name: 'truncate cache: dependencies'
-        uses: actions/upload-artifact@v1
-        with:
-          name: dependencies
-          path: empty.d
-      - name: 'truncate cache: backend-build'
-        uses: actions/upload-artifact@v1
-        with:
-          name: backend-build
-          path: empty.d
-      - name: 'truncate cache: frontend-build'
-        uses: actions/upload-artifact@v1
-        with:
-          name: frontend-build
-          path: empty.d
-      - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@2.11
-        with:
-          name: martijnhols/my-project
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#  docker-image:
+#    needs:
+#      [
+#        prepare,
+#        backend-validate-types,
+#        backend-build,
+#        frontend-validate-types,
+#        frontend-build,
+#      ]
+#    name: 'Publish Docker image'
+#    runs-on: ubuntu-latest
+#    if: github.event_name != 'pull_request'
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/download-artifact@v1
+#        with:
+#          name: dependencies
+#          path: .
+#      - run: tar -xzf dependencies.tar.gz
+#      - uses: actions/download-artifact@v1
+#        with:
+#          name: backend-build
+#          path: .
+#      - run: tar -xzf backend.tar.gz
+#      - uses: actions/download-artifact@v1
+#        with:
+#          name: frontend-build
+#          path: .
+#      - run: tar -xzf frontend.tar.gz
+#      # Remove files we no longer need to speed up sending context to Docker
+#      - run: rm dependencies.tar.gz backend.tar.gz frontend.tar.gz
+#      # Remove artifacts to avoid hitting GitHub's cap
+#      # Source: https://github.com/actions/upload-artifact/issues/5#issuecomment-565963170
+#      - name: create empty directory
+#        run: mkdir empty.d
+#      - name: 'truncate cache: dependencies'
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: dependencies
+#          path: empty.d
+#      - name: 'truncate cache: backend-build'
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: backend-build
+#          path: empty.d
+#      - name: 'truncate cache: frontend-build'
+#        uses: actions/upload-artifact@v1
+#        with:
+#          name: frontend-build
+#          path: empty.d
+#      - name: Publish to Registry
+#        uses: elgohr/Publish-Docker-Github-Action@2.11
+#        with:
+#          name: martijnhols/my-project
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
 # TODO: Sentry releases https://blog.sentry.io/2019/12/17/using-github-actions-to-create-sentry-releases
