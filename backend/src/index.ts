@@ -1,7 +1,13 @@
 import { ApolloServer } from 'apollo-server'
 import { PubSub } from 'graphql-subscriptions'
 
+import loadDotEnv from './env'
 import schema from './schema'
+import connectToDatabase from './connectToDatabase'
+
+loadDotEnv('.')
+
+connectToDatabase()
 
 export const pubsub = new PubSub()
 

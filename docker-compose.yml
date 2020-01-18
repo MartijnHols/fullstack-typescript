@@ -1,0 +1,26 @@
+version: '3'
+
+volumes:
+  database_data: {}
+
+networks:
+  database:
+
+services:
+  database:
+    image: mariadb:10.3
+    command:
+      [
+        '--character-set-server=utf8mb4',
+        '--collation-server=utf8mb4_unicode_ci',
+        '--lower_case_table_names=0',
+      ]
+    restart: unless-stopped
+    ports:
+      - '3306:3306'
+    volumes:
+      - database_data:/var/lib/mysql:rw
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+    networks:
+      - database
