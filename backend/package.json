@@ -19,9 +19,11 @@
     "@types/body-parser": "^1.17.1",
     "@types/express": "^4.17.2",
     "@types/express-pino-logger": "^4.0.2",
+    "@types/node": "^13.1.8",
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
     "nodemon": "^2.0.1",
+    "sequelize-cli": "^5.5.1",
     "ts-node-dev": "^1.0.0-pre.44"
   },
   "scripts": {

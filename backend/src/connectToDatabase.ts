@@ -1,27 +1,19 @@
-import { Sequelize } from 'sequelize'
+import { Dialect, Sequelize } from 'sequelize'
 
-function env(name: string) {
-  const value = process.env[name]
-  if (!value) {
-    throw new Error(`Missing environment variable: ${name}`)
-  }
-  return value
-}
+import { dialect, host, username, password, database } from './config/database'
 
 export default function connectToDatabase() {
-  const host = env('DATABASE_HOST')
-  const username = env('DATABASE_USERNAME')
-  const password = env('DATABASE_PASSWORD')
-  const dbName = env('DATABASE_DB_NAME')
-
-  const sequelize = new Sequelize(dbName, username, password, {
+  const sequelize = new Sequelize(database, username, password, {
     host,
-    dialect: 'mariadb',
+    dialect: dialect as Dialect,
     dialectOptions: {
       timezone: 'Etc/UTC',
     },
   })
 
+  // We always test the connection during start so we get immediate feedback
+  // whether things are running properly. Without this, we might only become
+  // aware at the first request.
   sequelize.authenticate().then(
     () => {
       console.log('Database connection has been established successfully.')

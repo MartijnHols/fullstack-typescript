@@ -1,0 +1,8 @@
+const path = require('path')
+require('./src/config/env')
+const config = require('./src/config/database')
+
+module.exports = {
+  'url': `${config.dialect}://${config.username}:${config.password}@${config.host}/${config.database}`,
+  'migrations-path': path.resolve(__dirname, 'src', 'migrations'),
+}
