@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 const fs = require('fs')
 const path = require('path')
 
@@ -24,7 +23,6 @@ const dotenvFiles = [
 // https://github.com/motdotla/dotenv-expand
 dotenvFiles.forEach(dotenvFile => {
   if (fs.existsSync(dotenvFile)) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
     require('dotenv-expand')(
       require('dotenv').config({
         path: dotenvFile,

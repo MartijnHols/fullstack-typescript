@@ -89,4 +89,15 @@ module.exports = {
 
     'prettier/prettier': ENABLE_PRETTIER ? 'error' : 'off',
   },
+  overrides: [
+    {
+      files: ['*.js'],
+      rules: {
+        // We only write JS when we need something to run in node.js without
+        // first compiling it. In that case, usually, we can't use module
+        // imports either.
+        '@typescript-eslint/no-var-requires': 'off',
+      },
+    },
+  ],
 }
