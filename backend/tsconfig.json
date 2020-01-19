@@ -2,6 +2,10 @@
   "extends": "../tsconfig",
   "include": ["src", "types"],
   "compilerOptions": {
-    "module": "commonjs"
+    "module": "commonjs",
+    // Necessary for https://github.com/RobinBuschmann/sequelize-typescript#installation
+    "target": "es6",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   }
 }

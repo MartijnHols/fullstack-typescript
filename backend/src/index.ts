@@ -2,11 +2,10 @@ import { ApolloServer } from 'apollo-server'
 import { PubSub } from 'graphql-subscriptions'
 
 import './config/env'
+import sequelize from './sequelize'
+import Account from './modules/account/models/Account'
 
 import schema from './schema'
-import connectToDatabase from './connectToDatabase'
-
-connectToDatabase()
 
 export const pubsub = new PubSub()
 
@@ -55,3 +54,5 @@ async function createServer() {
   }, 1000)
 }
 createServer()
+
+Account.sync()

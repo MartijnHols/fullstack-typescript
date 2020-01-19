@@ -1,16 +1,21 @@
-import { Dialect, Sequelize } from 'sequelize'
+import { Dialect } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { dialect, host, username, password, database } from './config/database'
 
-export default function connectToDatabase() {
-  const sequelize = new Sequelize(database, username, password, {
+function connect() {
+  return new Sequelize(database, username, password, {
     host,
     dialect: dialect as Dialect,
     dialectOptions: {
       timezone: 'Etc/UTC',
     },
+    define: {
+      freezeTableName: true,
+    },
   })
-
+}
+function test(sequelize: Sequelize) {
   // We always test the connection during start so we get immediate feedback
   // whether things are running properly. Without this, we might only become
   // aware at the first request.
@@ -23,6 +28,9 @@ export default function connectToDatabase() {
       process.exit()
     },
   )
-
-  return sequelize
 }
+
+const sequelize = connect()
+test(sequelize)
+
+export default sequelize
