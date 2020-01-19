@@ -1,5 +1,5 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 
 // The source pre-modifications: https://github.com/facebook/create-react-app/blob/33f1294f07a884ca2628fb6d8dc648bd18b25fbe/packages/react-scripts/config/env.js#L25-L49
 const dotEnvPath = path.resolve(__dirname, '../../.env')
@@ -14,7 +14,7 @@ const dotenvFiles = [
   // results for everyone
   NODE_ENV !== 'test' && `${dotEnvPath}.local`,
   dotEnvPath,
-].filter(Boolean)
+].filter(Boolean) as string[]
 
 // Load environment variables from .env* files. Suppress warnings using silent
 // if this file is missing. dotenv will never modify any environment variables
@@ -23,6 +23,7 @@ const dotenvFiles = [
 // https://github.com/motdotla/dotenv-expand
 dotenvFiles.forEach(dotenvFile => {
   if (fs.existsSync(dotenvFile)) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     require('dotenv-expand')(
       require('dotenv').config({
         path: dotenvFile,
