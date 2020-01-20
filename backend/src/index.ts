@@ -2,10 +2,11 @@ import { ApolloServer } from 'apollo-server'
 import { PubSub } from 'graphql-subscriptions'
 
 import './config/env'
-import sequelize from './sequelize'
-import Account from './modules/account/models/Account'
 
 import schema from './schema'
+import accountResolvers, {
+  typeDefs as accountTypeDefs,
+} from './modules/account/resolvers'
 
 export const pubsub = new PubSub()
 
@@ -23,9 +24,6 @@ export const books = [
 export const SOMETHING_CHANGED_TOPIC = 'something_changed'
 
 export const resolvers = {
-  Query: {
-    books: () => books,
-  },
   Subscription: {
     somethingChanged: {
       subscribe: () => pubsub.asyncIterator(SOMETHING_CHANGED_TOPIC),
@@ -35,8 +33,8 @@ export const resolvers = {
 
 async function createServer() {
   const server = new ApolloServer({
-    typeDefs: schema,
-    resolvers,
+    typeDefs: [schema, accountTypeDefs],
+    resolvers: [resolvers, accountResolvers],
     subscriptions: {
       onConnect: (connectionParams, webSocket) => {
         console.log('NEW_CONNECTION', connectionParams, webSocket)
@@ -54,5 +52,3 @@ async function createServer() {
   }, 1000)
 }
 createServer()
-
-Account.sync()
