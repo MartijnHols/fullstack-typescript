@@ -1,4 +1,6 @@
-import { IResolvers, gql } from 'apollo-server'
+import { IResolvers, gql, ApolloError } from 'apollo-server'
+import Sequelize from 'sequelize'
+
 import Account from './models/Account'
 
 export const typeDefs = gql`
@@ -14,6 +16,11 @@ export const typeDefs = gql`
     accounts: [Account!]
     account(id: ID!): Account
   }
+
+  extend type Mutation {
+    register(email: String!): Account
+    login(email: String!, password: String!): Account
+  }
 `
 
 const resolverMap: IResolvers = {
@@ -27,6 +34,37 @@ const resolverMap: IResolvers = {
           id: args.id,
         },
       })
+    },
+  },
+  Mutation: {
+    async register(obj, { email }: { email: string }, context, info) {
+      const account = new Account()
+      account.email = email
+      return account.save()
+    },
+    async login(
+      obj,
+      { email, password }: { email: string; password: string },
+      context,
+      info,
+    ) {
+      const account = await Account.findOne({
+        where: {
+          email,
+        },
+      })
+      if (!account) {
+        throw new ApolloError(
+          `No account could be found for the email address: ${email}`,
+          'no-account',
+        )
+      }
+      if (!account.validatePassword(password)) {
+        throw new ApolloError(`This password is invalid`, 'invalid-password')
+      }
+      account.lastSeenAt = new Date()
+
+      return await account.save()
     },
   },
 }

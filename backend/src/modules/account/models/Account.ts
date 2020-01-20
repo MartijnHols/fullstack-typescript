@@ -50,12 +50,13 @@ class Account extends Model<Account> {
       notEmpty: true,
     },
   })
-  passwordHash!: string | null
+  private passwordHash!: string | null
   // If password is a part of the registration form, we need a separate
   // indicator whether the account is verified.
   @Column({
     type: DataTypes.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
   verified!: boolean
 
@@ -74,7 +75,10 @@ class Account extends Model<Account> {
   lastSeenAt!: Date
 
   set password(value: string) {
-    this.setDataValue('passwordHash', hashPassword(value))
+    this.passwordHash = hashPassword(value)
+  }
+  validatePassword(value: string) {
+    return this.passwordHash === hashPassword(value)
   }
 }
 
