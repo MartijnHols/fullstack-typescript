@@ -19,6 +19,7 @@ function connect() {
       updatedAt: false,
       deletedAt: false,
     },
+    logging: sql => console.log(`🗄️${sql}`),
   })
 }
 function test(sequelize: Sequelize) {
@@ -27,10 +28,10 @@ function test(sequelize: Sequelize) {
   // aware at the first request.
   sequelize.authenticate().then(
     () => {
-      console.log('Database connection has been established successfully.')
+      console.log('🗄 Database connection has been established successfully.')
     },
     (err: Error) => {
-      console.error('Unable to connect to the database:', err)
+      console.error('🗄️ Unable to connect to the database:', err)
       process.exit()
     },
   )
