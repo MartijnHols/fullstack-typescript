@@ -12,6 +12,12 @@ function connect() {
     },
     define: {
       freezeTableName: true,
+      // Only add the fields when the decorators are used, don't add anything by
+      // default
+      timestamps: false,
+      createdAt: false,
+      updatedAt: false,
+      deletedAt: false,
     },
   })
 }
