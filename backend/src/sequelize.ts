@@ -16,6 +16,7 @@ function connect() {
       // default
       timestamps: false,
       createdAt: false,
+      // Without this, @CreatedAt would also add an updatedAt column. See https://github.com/RobinBuschmann/sequelize-typescript/issues/50
       updatedAt: false,
       deletedAt: false,
     },
