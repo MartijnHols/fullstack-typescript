@@ -1,5 +1,4 @@
 import { IResolvers, gql, ApolloError } from 'apollo-server'
-import Sequelize from 'sequelize'
 
 import Account from './models/Account'
 
@@ -20,15 +19,20 @@ export const typeDefs = gql`
   extend type Mutation {
     register(email: String!): Account
     login(email: String!, password: String!): Account
+    changePassword(
+      email: String!
+      currentPassword: String!
+      newPassword: String!
+    ): Account
   }
 `
 
 const resolverMap: IResolvers = {
   Query: {
-    accounts(obj, args, context, info) {
+    accounts() {
       return Account.findAll()
     },
-    account(obj, args, context, info) {
+    account(obj, args) {
       return Account.findOne({
         where: {
           id: args.id,
@@ -37,16 +41,37 @@ const resolverMap: IResolvers = {
     },
   },
   Mutation: {
-    async register(obj, { email }: { email: string }, context, info) {
+    async register(obj, { email }: { email: string }) {
       const account = new Account()
       account.email = email
       return account.save()
     },
-    async login(
+    async login(obj, { email, password }: { email: string; password: string }) {
+      const account = await Account.findOne({
+        where: {
+          email,
+        },
+      })
+      if (!account) {
+        throw new ApolloError(
+          `No account could be found for the email address: ${email}`,
+          'no-account',
+        )
+      }
+      if (!(await account.validatePassword(password))) {
+        throw new ApolloError('This password is invalid', 'invalid-password')
+      }
+      account.lastSeenAt = new Date()
+
+      return account.save()
+    },
+    async changePassword(
       obj,
-      { email, password }: { email: string; password: string },
-      context,
-      info,
+      {
+        email,
+        currentPassword,
+        newPassword,
+      }: { email: string; currentPassword: string; newPassword: string },
     ) {
       const account = await Account.findOne({
         where: {
@@ -59,12 +84,11 @@ const resolverMap: IResolvers = {
           'no-account',
         )
       }
-      if (!account.validatePassword(password)) {
+      if (!(await account.validatePassword(currentPassword))) {
         throw new ApolloError(`This password is invalid`, 'invalid-password')
       }
-      account.lastSeenAt = new Date()
-
-      return await account.save()
+      await account.setPassword(newPassword)
+      return account.save()
     },
   },
 }

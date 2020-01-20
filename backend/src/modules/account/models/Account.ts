@@ -13,12 +13,11 @@
 
 import { DataTypes } from 'sequelize'
 import { Table, Column, Model } from 'sequelize-typescript'
+import bcrypt from 'bcrypt'
 
 import sequelize from '../../../sequelize'
 
-function hashPassword(password: string) {
-  return password
-}
+const SALT_ROUNDS = 10
 
 @Table
 class Account extends Model<Account> {
@@ -74,11 +73,15 @@ class Account extends Model<Account> {
   })
   lastSeenAt!: Date
 
-  set password(value: string) {
-    this.passwordHash = hashPassword(value)
+  async setPassword(value: string) {
+    this.passwordHash = await bcrypt.hash(value, SALT_ROUNDS)
   }
   validatePassword(value: string) {
-    return this.passwordHash === hashPassword(value)
+    if (!this.passwordHash) {
+      throw new Error('User has no password and can not login yet')
+    }
+
+    return bcrypt.compare(value, this.passwordHash)
   }
 }
 
