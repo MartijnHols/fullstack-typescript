@@ -10,17 +10,6 @@ import accountResolvers, {
 
 export const pubsub = new PubSub()
 
-export const books = [
-  {
-    title: 'Harry Potter and the Chamber of Secrets',
-    author: 'J.K. Rowling',
-  },
-  {
-    title: 'Jurassic Park',
-    author: 'Michael Crichton',
-  },
-]
-
 export const SOMETHING_CHANGED_TOPIC = 'something_changed'
 
 export const resolvers = {
@@ -47,6 +36,7 @@ async function createServer() {
   console.log(`🚀 Server ready at ${url}`)
   console.log(`🚀 Subscriptions ready at ${subscriptionsUrl}`)
 
+  // For testing (PoC)
   setInterval(() => {
     pubsub.publish(SOMETHING_CHANGED_TOPIC, { somethingChanged: { id: '123' } })
   }, 1000)

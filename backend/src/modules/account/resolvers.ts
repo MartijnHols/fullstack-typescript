@@ -1,4 +1,8 @@
-import { IResolvers, gql, ApolloError } from 'apollo-server'
+import { IResolvers, gql } from 'apollo-server'
+
+import changePassword from './actions/changePassword'
+import login from './actions/login'
+import register from './actions/register'
 
 import Account from './models/Account'
 
@@ -27,69 +31,34 @@ export const typeDefs = gql`
   }
 `
 
+// TODO: Remove these as they're just for PoC
+const getAccounts = () => Account.findAll()
+const getAccountById = (id: number) =>
+  Account.findOne({
+    where: {
+      id,
+    },
+  })
+
 const resolverMap: IResolvers = {
   Query: {
-    accounts() {
-      return Account.findAll()
-    },
-    account(obj, args) {
-      return Account.findOne({
-        where: {
-          id: args.id,
-        },
-      })
-    },
+    accounts: () => getAccounts(),
+    account: (_, { id }: { id: number }) => getAccountById(id),
   },
   Mutation: {
-    async register(obj, { email }: { email: string }) {
-      const account = new Account()
-      account.email = email
-      return account.save()
-    },
-    async login(obj, { email, password }: { email: string; password: string }) {
-      const account = await Account.findOne({
-        where: {
-          email,
-        },
-      })
-      if (!account) {
-        throw new ApolloError(
-          `No account could be found for the email address: ${email}`,
-          'no-account',
-        )
-      }
-      if (!(await account.validatePassword(password))) {
-        throw new ApolloError('This password is invalid', 'invalid-password')
-      }
-      account.lastSeenAt = new Date()
-
-      return account.save()
-    },
-    async changePassword(
+    register: async (_, { email }: { email: string }) => register(email),
+    login: async (
+      obj,
+      { email, password }: { email: string; password: string },
+    ) => login(email, password),
+    changePassword: async (
       obj,
       {
         email,
         currentPassword,
         newPassword,
       }: { email: string; currentPassword: string; newPassword: string },
-    ) {
-      const account = await Account.findOne({
-        where: {
-          email,
-        },
-      })
-      if (!account) {
-        throw new ApolloError(
-          `No account could be found for the email address: ${email}`,
-          'no-account',
-        )
-      }
-      if (!(await account.validatePassword(currentPassword))) {
-        throw new ApolloError(`This password is invalid`, 'invalid-password')
-      }
-      await account.setPassword(newPassword)
-      return account.save()
-    },
+    ) => changePassword(email, currentPassword, newPassword),
   },
 }
 
