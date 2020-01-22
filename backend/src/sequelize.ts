@@ -33,7 +33,7 @@ function test(sequelize: Sequelize) {
     },
     (err: Error) => {
       console.error('🗄️ Unable to connect to the database:', err)
-      process.exit()
+      process.exit(1)
     },
   )
 }
