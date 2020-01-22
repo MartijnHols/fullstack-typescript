@@ -1,34 +1,18 @@
-import { ApolloServer } from 'apollo-server'
-import { PubSub } from 'graphql-subscriptions'
-
 import './config/env'
-
-import schema from './schema'
+import createApolloServer, {
+  pubsub,
+  SOMETHING_CHANGED_TOPIC,
+  tempResolvers,
+} from './createApolloServer'
 import accountResolvers, {
   typeDefs as accountTypeDefs,
 } from './modules/account/resolvers'
+import schema from './schema'
 
-export const pubsub = new PubSub()
-
-export const SOMETHING_CHANGED_TOPIC = 'something_changed'
-
-export const resolvers = {
-  Subscription: {
-    somethingChanged: {
-      subscribe: () => pubsub.asyncIterator(SOMETHING_CHANGED_TOPIC),
-    },
-  },
-}
-
-async function createServer() {
-  const server = new ApolloServer({
+async function main() {
+  const server = createApolloServer({
     typeDefs: [schema, accountTypeDefs],
-    resolvers: [resolvers, accountResolvers],
-    subscriptions: {
-      onConnect: (connectionParams, webSocket) => {
-        console.log('NEW_CONNECTION', connectionParams, webSocket)
-      },
-    },
+    resolvers: [tempResolvers, accountResolvers],
   })
 
   const { url, subscriptionsUrl } = await server.listen()
@@ -41,4 +25,4 @@ async function createServer() {
     pubsub.publish(SOMETHING_CHANGED_TOPIC, { somethingChanged: { id: '123' } })
   }, 1000)
 }
-createServer()
+main()
