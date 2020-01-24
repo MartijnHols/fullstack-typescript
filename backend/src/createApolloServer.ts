@@ -8,6 +8,10 @@ import accountResolvers, {
   typeDefs as accountTypeDefs,
 } from './modules/account/resolvers'
 import schema from './schema'
+import {
+  directive as rateLimitDirective,
+  typeDefs as rateLimitTypeDefs,
+} from './apolloRateLimit'
 
 export const pubsub = new PubSub()
 
@@ -21,15 +25,27 @@ export const tempResolvers = {
 }
 
 const createApolloServer = ({
-  typeDefs = [schema, accountTypeDefs],
-  resolvers = [tempResolvers, accountResolvers],
+  typeDefs = [],
+  resolvers = [],
 }: {
-  typeDefs?: DocumentNode | Array<DocumentNode> | string | Array<string>
-  resolvers?: IResolvers | Array<IResolvers>
+  typeDefs?: DocumentNode | DocumentNode[]
+  resolvers?: IResolvers | IResolvers[]
 } = {}) =>
   new ApolloServer({
-    typeDefs,
-    resolvers,
+    typeDefs: [
+      rateLimitTypeDefs,
+      schema,
+      accountTypeDefs,
+      ...(Array.isArray(typeDefs) ? typeDefs : [typeDefs]),
+    ],
+    resolvers: [
+      tempResolvers,
+      accountResolvers,
+      ...(Array.isArray(resolvers) ? resolvers : [resolvers]),
+    ],
+    schemaDirectives: {
+      rateLimit: rateLimitDirective,
+    },
     subscriptions: {
       onConnect: (connectionParams, webSocket) => {
         console.log('NEW_CONNECTION', connectionParams, webSocket)

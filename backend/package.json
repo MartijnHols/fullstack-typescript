@@ -13,6 +13,7 @@
     "express-pino-logger": "^4.0.0",
     "graphql": "^14.5.8",
     "graphql-depth-limit": "^1.1.0",
+    "graphql-rate-limit": "^2.0.1",
     "graphql-subscriptions": "^1.1.0",
     "mariadb": "^2.1.5",
     "reflect-metadata": "^0.1.13",
@@ -41,6 +42,7 @@
   "scripts": {
     "start": "ts-node-dev --respawn --transpileOnly src/index.ts",
     "build": "tsc --outDir build --noEmit false --sourceMap && (cp .env .env.production build || true)",
+    "test": "jest .",
     "serve": "NODE_ENV=production node build/index.js",
     "typecheck": "tsc",
     "lint": "yarn --silent lint:code && yarn --silent lint:rest",

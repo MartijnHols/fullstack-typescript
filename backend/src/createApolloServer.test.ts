@@ -1,12 +1,89 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { gql } from 'apollo-server'
 import { createTestClient, ApolloServerTestClient } from 'apollo-server-testing'
+import { GraphQLResponse } from 'apollo-server-types'
 
 import createApolloServer from './createApolloServer'
+import sleep from './sleep'
 
+// In order to make it harder to execute an effective DOS attack, we use several
+// abuse protections.
 describe('abuse protection', () => {
-  // TODO: Rate limiting
+  // While these solutions are tested themselves, we're not married to those
+  // implementations. These tests verify that they're implemented correctly,
+  // and are doing their jobs, regardless of the library chosen.
 
-  // In order to reduce area susceptible to DOS attacks, we limit query depth
+  describe('rate limit', () => {
+    let execute!: () => Promise<GraphQLResponse>
+    const resolver = jest.fn(() => true)
+    beforeEach(() => {
+      const typeDefs = gql`
+        type TestPrivateKey {
+          id: String
+        }
+        extend type Query {
+          test: TestPrivateKey
+            @rateLimit(
+              window: "1s"
+              max: 1
+              message: "You are doing that too often."
+            )
+        }
+      `
+      const resolvers = {
+        Query: {
+          test: resolver,
+        },
+      }
+      const server = createApolloServer({
+        typeDefs,
+        resolvers,
+      })
+      const { query } = createTestClient(server)
+      execute = () =>
+        query({
+          query: gql`
+            query {
+              test {
+                id
+              }
+            }
+          `,
+        })
+    })
+    it('allows a single query', async () => {
+      const { data, errors } = await execute()
+      expect(errors).toBeFalsy()
+      expect(data).toBeTruthy()
+      expect(data!.test).toBeTruthy()
+    })
+    it('does not allow 2 queries within 1 second', async () => {
+      await execute()
+      const { data, errors } = await execute()
+      expect(errors).toBeTruthy()
+      // It doesn't matter if the entire data is omitted, or test's value is
+      // omitted.
+      expect(data && data.test).toBeFalsy()
+      // But it mustn't call the resolver when limiting.
+      expect(resolver).toHaveBeenCalledTimes(1)
+    })
+    it('resets after time expires', async () => {
+      await execute()
+
+      // We have to actually wait for a second since the data store does not use
+      // timers. It probably uses timestamps instead.
+      await sleep(1000)
+
+      const { data, errors } = await execute()
+      expect(errors).toBeFalsy()
+      expect(data).toBeTruthy()
+      expect(data!.test).toBeTruthy()
+    })
+  })
+
+  // TODO: Complexity limiting
+
+  // In order to make it harder to execute an effective DOS attack, we limit query depth
   describe('query depth', () => {
     // While graphql-depth-limit is tested, we're not married to that
     // implementation. Therefore we need to test that the depth is limited,
@@ -19,7 +96,7 @@ describe('abuse protection', () => {
           id: String
           nested: NestingTest
         }
-        type Query {
+        extend type Query {
           test: NestingTest
         }
       `

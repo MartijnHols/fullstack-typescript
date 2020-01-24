@@ -39,6 +39,8 @@ function test(sequelize: Sequelize) {
 }
 
 const sequelize = connect()
-test(sequelize)
+if (process.env.NODE_ENV !== 'test') {
+  test(sequelize)
+}
 
 export default sequelize
