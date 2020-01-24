@@ -23,7 +23,7 @@ describe('abuse protection', () => {
         }
         extend type Query {
           test: TestPrivateKey
-            @rateLimit(
+            @rateLimitBurst(
               window: "1s"
               max: 1
               message: "You are doing that too often."

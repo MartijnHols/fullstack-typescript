@@ -22,12 +22,18 @@ export const typeDefs = gql`
 
   extend type Mutation {
     register(email: String!): Account
+      @rateLimitBurst(window: "1s", max: 1)
+      @rateLimitSustained(window: "1d", max: 1000)
     login(email: String!, password: String!): Account
+      @rateLimitBurst(window: "1s", max: 5)
+      @rateLimitSustained(window: "1d", max: 5000)
     changePassword(
       email: String!
       currentPassword: String!
       newPassword: String!
     ): Account
+      @rateLimitBurst(window: "1s", max: 2)
+      @rateLimitSustained(window: "1d", max: 1000)
   }
 `
 
