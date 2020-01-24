@@ -1,4 +1,4 @@
-import { IResolvers, gql } from 'apollo-server'
+import { IResolvers, gql } from 'apollo-server-express'
 
 import changePassword from './actions/changePassword'
 import login from './actions/login'

@@ -1,4 +1,4 @@
-import { ApolloServer, gql } from 'apollo-server'
+import { ApolloServer, gql } from 'apollo-server-express'
 import { DocumentNode } from 'graphql'
 import depthLimit from 'graphql-depth-limit'
 import { createRateLimitDirective } from 'graphql-rate-limit'
@@ -73,7 +73,7 @@ const createApolloServer = ({
     },
     subscriptions: {
       onConnect: (connectionParams, webSocket) => {
-        console.log('NEW_CONNECTION', connectionParams, webSocket)
+        // console.log('NEW_CONNECTION', connectionParams, webSocket)
       },
     },
     validationRules: [depthLimit(10)],

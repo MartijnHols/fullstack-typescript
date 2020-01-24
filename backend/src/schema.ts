@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server'
+import { gql } from 'apollo-server-express'
 
 const schema = gql`
   # Types may not be empty: https://github.com/apollographql/graphql-tools/issues/648

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { gql } from 'apollo-server'
+import { gql } from 'apollo-server-express'
 import { createTestClient, ApolloServerTestClient } from 'apollo-server-testing'
 import { GraphQLResponse } from 'apollo-server-types'
 
