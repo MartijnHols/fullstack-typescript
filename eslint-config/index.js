@@ -36,6 +36,10 @@ module.exports = {
     // overrides even if we're ignoring Prettier rule problems.
     // https://prettier.io/docs/en/integrating-with-linters.html#recommended-configuration
     'plugin:prettier/recommended',
+    // See https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore for
+    // reasons why.
+    // https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore/blob/master/lib/rules/all.js
+    'plugin:you-dont-need-lodash-underscore/compatible',
   ],
   rules: {
     // region Syntax
