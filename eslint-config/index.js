@@ -7,15 +7,12 @@
 // Work in progress. A couple of inconvenient rules still need to be disabled.
 // Will do as I run into them.
 
-// TODO: Move this to its own repository to make this more reusable and greatly
-//  reduce the amount of packages in the package.json.
-
 // Only run Prettier on the CLI and in CI. This way IDEs can do good linting and
 // show inline issues without Prettier warnings everywhere. We do want Prettier
 // included in the linting rather than as separate output because the formatting
 // of eslint is more readable, and they both indicate code issues that need to
 // be fixed. We just don't want Prettier to put a red underline underneath all
-// code not just Prettier formatted.
+// code not yet Prettier formatted.
 const ENABLE_PRETTIER = process.env.PRETTIER === 'true'
 
 module.exports = {
