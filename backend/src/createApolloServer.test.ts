@@ -2,6 +2,7 @@
 import { gql } from 'apollo-server-express'
 import { createTestClient, ApolloServerTestClient } from 'apollo-server-testing'
 import { GraphQLResponse } from 'apollo-server-types'
+import httpMocks from 'node-mocks-http'
 
 import createApolloServer from './createApolloServer'
 import sleep from './sleep'
@@ -38,6 +39,11 @@ describe('abuse protection', () => {
       const server = createApolloServer({
         typeDefs,
         resolvers,
+        context: {
+          req: httpMocks.createRequest({
+            ip: '127.0.0.1',
+          }),
+        },
       })
       const { query } = createTestClient(server)
       execute = () =>

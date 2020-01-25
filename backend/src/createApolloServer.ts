@@ -1,10 +1,9 @@
 import { ApolloServer, gql } from 'apollo-server-express'
+import { ApolloServerExpressConfig } from 'apollo-server-express'
 import { DocumentNode } from 'graphql'
 import depthLimit from 'graphql-depth-limit'
 import { createRateLimitDirective } from 'graphql-rate-limit'
-import { GraphQLRateLimitConfig } from 'graphql-rate-limit/build/main/lib/types'
 import { PubSub } from 'graphql-subscriptions'
-import { IResolvers } from 'graphql-tools'
 
 import accountResolvers, {
   typeDefs as accountTypeDefs,
@@ -38,12 +37,10 @@ export const rateLimitTypeDefs = gql`
     arrayLengthField: String
   ) on FIELD_DEFINITION
 `
+type GraphQLRateLimitConfig = Parameters<typeof createRateLimitDirective>[0]
 const config: GraphQLRateLimitConfig = {
-  // TODO: Use request.ip instead
-  // TODO: To make that possible, fix apollo-testing to include a req/res like https://github.com/zapier/apollo-server-integration-testing
-  identifyContext: ctx => ctx.id,
+  identifyContext: ctx => ctx.req.ip,
 }
-// We should prevent spam clicking in our interface, and so this is purely against abuse
 const rateLimitBurstDirective = createRateLimitDirective(config)
 // Big enough not to cap locations with a lot of users, but not too big to avoid damage
 const rateLimitSustainedDirective = createRateLimitDirective(config)
@@ -51,17 +48,15 @@ const rateLimitSustainedDirective = createRateLimitDirective(config)
 const createApolloServer = ({
   typeDefs = [],
   resolvers = [],
-}: {
-  typeDefs?: DocumentNode | DocumentNode[]
-  resolvers?: IResolvers | IResolvers[]
-} = {}) =>
+  ...others
+}: Partial<ApolloServerExpressConfig> = {}) =>
   new ApolloServer({
     typeDefs: [
       rateLimitTypeDefs,
       schema,
       accountTypeDefs,
       ...(Array.isArray(typeDefs) ? typeDefs : [typeDefs]),
-    ],
+    ] as DocumentNode | DocumentNode[] | string | string[],
     resolvers: [
       tempResolvers,
       accountResolvers,
@@ -77,6 +72,7 @@ const createApolloServer = ({
       },
     },
     validationRules: [depthLimit(10)],
+    ...others,
   })
 
 export default createApolloServer

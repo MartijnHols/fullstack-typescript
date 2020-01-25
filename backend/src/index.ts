@@ -75,7 +75,7 @@ async function main() {
 
   const { url, subscriptionsUrl } = createServerInfo(httpServer)
 
-  console.log(`🚀 Server ready at ${url}/`)
+  console.log(`🚀 Server ready at ${url}`)
   console.log(`🚀 Subscriptions ready at ${subscriptionsUrl}`)
 
   // For testing (PoC)
