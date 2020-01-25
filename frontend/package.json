@@ -1,5 +1,5 @@
 {
-  "name": "@fullstack-typescript/frontend",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -74,6 +74,6 @@
     "snapshotResolver": "./snapshotResolver.js"
   },
   "eslintConfig": {
-    "extends": "../.eslintrc.js"
+    "extends": "../eslint-config/index.js"
   }
 }

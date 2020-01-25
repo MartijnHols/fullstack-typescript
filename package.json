@@ -4,26 +4,14 @@
   "private": true,
   "dependencies": {},
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "2.x",
-    "@typescript-eslint/parser": "2.x",
-    "babel-eslint": "10.x",
     "concurrently": "^5.0.0",
-    "eslint": "6.x",
-    "eslint-config-prettier": "^6.9.0",
-    "eslint-config-react-app": "^5.1.0",
-    "eslint-plugin-flowtype": "3.x",
-    "eslint-plugin-import": "2.x",
-    "eslint-plugin-jsx-a11y": "6.x",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-react": "7.x",
-    "eslint-plugin-react-hooks": "1.x",
     "husky": "^3.1.0",
     "lint-staged": "^9.5.0",
     "prettier": "^1.19.1",
     "typescript": "^3.7.3"
   },
   "scripts": {
-    "build": "concurrently \"yarn workspace @fullstack-typescript/backend build\" \"yarn workspace @fullstack-typescript/frontend build\"",
+    "build": "concurrently \"yarn workspace backend build\" \"yarn workspace frontend build\"",
     "lint": "yarn --silent lint:code && yarn --silent lint:rest",
     "lint:code": "yarn --silent lint:code:specific .",
     "lint:code:specific": "PRETTIER=true eslint --format stylish --ext .js,.jsx,.ts,.tsx",
@@ -49,6 +37,10 @@
   },
   "workspaces": [
     "backend",
-    "frontend"
-  ]
+    "frontend",
+    "eslint-config"
+  ],
+  "eslintConfig": {
+    "extends": "./eslint-config/index.js"
+  }
 }

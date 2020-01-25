@@ -1,5 +1,5 @@
 {
-  "name": "@fullstack-typescript/backend",
+  "name": "backend",
   "version": "0.0.1",
   "main": "src/index.ts",
   "author": "Martijn Hols",
@@ -54,6 +54,6 @@
     "migrate": "yarn build && rm -rf ./build/migrations/*.js.map && yarn sequelize-cli db:migrate"
   },
   "eslintConfig": {
-    "extends": "../.eslintrc.js"
+    "extends": "../eslint-config/index.js"
   }
 }
