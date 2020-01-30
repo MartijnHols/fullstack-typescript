@@ -12,12 +12,11 @@
 // affected users should our login be compromised.
 
 import { DataTypes } from 'sequelize'
-import { Table, Column, Model } from 'sequelize-typescript'
-import bcrypt from 'bcrypt'
+import { Table, Column, Model, HasMany } from 'sequelize-typescript'
+import hashPassword from '../../../utils/hashPassword'
+import validatePassword from '../../../utils/validatePassword'
 
-import sequelize from '../../../sequelize'
-
-const SALT_ROUNDS = 10
+import Session from './Session'
 
 @Table
 class Account extends Model<Account> {
@@ -73,18 +72,19 @@ class Account extends Model<Account> {
   })
   lastSeenAt!: Date
 
+  @HasMany(() => Session)
+  sessions!: Session[]
+
   async setPassword(value: string) {
-    this.passwordHash = await bcrypt.hash(value, SALT_ROUNDS)
+    this.passwordHash = await hashPassword(value)
   }
-  validatePassword(value: string) {
+  async validatePassword(value: string) {
     if (!this.passwordHash) {
       throw new Error('User has no password and can not login yet')
     }
 
-    return bcrypt.compare(value, this.passwordHash)
+    return await validatePassword(value, this.passwordHash)
   }
 }
-
-sequelize.addModels([Account])
 
 export default Account

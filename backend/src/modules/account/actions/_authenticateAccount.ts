@@ -2,7 +2,10 @@ import { ApolloError } from 'apollo-server-express'
 
 import Account from '../models/Account'
 
-const authenticateAccount = async (email: string, password: string) => {
+const authenticateAccount = async (
+  email: string,
+  password: string,
+): Promise<Account> => {
   const account = await Account.findOne({
     where: {
       email,

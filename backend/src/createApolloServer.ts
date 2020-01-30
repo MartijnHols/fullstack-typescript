@@ -5,9 +5,10 @@ import depthLimit from 'graphql-depth-limit'
 import { createRateLimitDirective } from 'graphql-rate-limit'
 import { PubSub } from 'graphql-subscriptions'
 
-import accountResolvers, {
+import {
+  resolvers as accountResolvers,
   typeDefs as accountTypeDefs,
-} from './modules/account/resolvers'
+} from './modules/account'
 import schema from './schema'
 
 export const pubsub = new PubSub()
