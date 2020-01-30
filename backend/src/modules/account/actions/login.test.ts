@@ -33,3 +33,9 @@ it('returns a different sessionId for each request', async () => {
   const sessionId2 = await login('test@example.nl', 'valid')
   expect(sessionId1).not.toBe(sessionId2)
 })
+it('allows for multiple simultaneous sessions', async () => {
+  await login('test@example.nl', 'valid')
+  await login('test@example.nl', 'valid')
+  const sessions = await Session.findAll()
+  expect(sessions).toHaveLength(2)
+})
