@@ -1,8 +1,11 @@
 const path = require('path')
+
 require('./build/config/env')
-const config = require('./build/config/database')
 
 module.exports = {
-  'url': `${config.dialect}://${config.username}:${config.password}@${config.host}/${config.database}`,
+  // We need to compile for migrations & production anyway, so compiling the
+  // config requires nothing extra. A big gain is that we can write
+  // everything in TypeScript.
+  'config': path.resolve(__dirname, 'build', 'config', 'sequelize.js'),
   'migrations-path': path.resolve(__dirname, 'build', 'migrations'),
 }

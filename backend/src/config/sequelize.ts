@@ -11,3 +11,6 @@ export const host = env('DATABASE_HOST')
 export const username = env('DATABASE_USERNAME')
 export const password = env('DATABASE_PASSWORD')
 export const database = env('DATABASE_DB_NAME')
+export const dialectOptions = {
+  timezone: dialect === 'mariadb' ? 'Etc/UTC' : undefined,
+}

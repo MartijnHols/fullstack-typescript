@@ -1,7 +1,7 @@
 import { Dialect } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
-import { dialect, host, username, password, database } from './config/database'
+import { dialect, host, username, password, database } from './config/sequelize'
 
 function connect() {
   return new Sequelize(database, username, password, {
