@@ -20,7 +20,11 @@ function connect() {
       updatedAt: false,
       deletedAt: false,
     },
-    logging: sql => console.log(`🗄️${sql}`),
+    logging:
+      process.env.DATABASE_VERBOSE === 'true'
+        ? sql => console.log(`🗄️${sql}`)
+        : false,
+    models,
   })
 }
 function test(sequelize: Sequelize) {
