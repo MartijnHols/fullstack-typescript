@@ -1,3 +1,4 @@
+// @ts-ignore
 const path = require('path')
 
 require('./build/config/env')
