@@ -46,7 +46,7 @@
     "start": "ts-node-dev --respawn --transpileOnly src/index.ts",
     "build": "tsc --outDir build --noEmit false --sourceMap && (cp .env .env.production build || true)",
     "pretest": "NODE_ENV=test yarn db:migrate",
-    "test": "jest",
+    "test": "jest --runInBand",
     "serve": "NODE_ENV=production node build/index.js",
     "typecheck": "tsc",
     "lint": "yarn --silent lint:code && yarn --silent lint:rest",
