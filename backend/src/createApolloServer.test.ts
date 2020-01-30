@@ -5,7 +5,7 @@ import { GraphQLResponse } from 'apollo-server-types'
 import httpMocks from 'node-mocks-http'
 
 import createApolloServer from './createApolloServer'
-import sleep from './sleep'
+import sleep from './utils/sleep'
 
 // In order to make it harder to execute an effective DOS attack, we use several
 // abuse protections.
