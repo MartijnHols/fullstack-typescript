@@ -1,12 +1,13 @@
 // TODO: Make root ~ import possible
 import hashPassword from '../../../utils/hashPassword'
-import truncateDatabase from '../../../utils/truncateDatabase'
+import setupDatabaseTests from '../../../utils/setupDatabaseTests'
 import Account from '../models/Account'
 import Session from '../models/Session'
 import login from './login'
 
+setupDatabaseTests()
+
 beforeEach(async () => {
-  await truncateDatabase()
   await Account.create({
     email: 'test@example.nl',
     passwordHash: await hashPassword('valid'),
