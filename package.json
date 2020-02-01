@@ -7,6 +7,8 @@
     "concurrently": "^5.0.0",
     "husky": "^3.1.0",
     "lint-staged": "^9.5.0",
+    "patch-package": "^6.2.0",
+    "postinstall-postinstall": "^2.0.0",
     "prettier": "^1.19.1",
     "typescript": "^3.7.3"
   },
@@ -20,7 +22,8 @@
     "lint:fix": "yarn --silent lint:code --fix && prettier --write '**/*.{json,md,css,scss,graphql,yml}'",
     "test": "yarn workspaces run test",
     "typecheck": "yarn workspaces run typecheck",
-    "precommit": "yarn typecheck && yarn lint-staged"
+    "precommit": "yarn typecheck && yarn lint-staged",
+    "postinstall": "patch-package"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
