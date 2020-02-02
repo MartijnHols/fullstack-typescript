@@ -1,8 +1,8 @@
 // TODO: Make root ~ import possible
-import hashPassword from '../../../utils/hashPassword'
 import setupDatabaseTests from '../../../utils/setupDatabaseTests'
 import Account from '../models/Account'
 import Session from '../models/Session'
+import hashPassword from '../utils/hashPassword'
 import changePassword from './changePassword'
 import createSession from './_createSession'
 

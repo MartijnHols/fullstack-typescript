@@ -13,9 +13,9 @@
 
 import { DataTypes } from 'sequelize'
 import { Table, Column, Model, HasMany } from 'sequelize-typescript'
-import hashPassword from '../../../utils/hashPassword'
-import validatePassword from '../../../utils/validatePassword'
 
+import hashPassword from '../utils/hashPassword'
+import validatePassword from '../utils/validatePassword'
 import Session from './Session'
 
 @Table
