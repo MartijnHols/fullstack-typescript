@@ -1,5 +1,8 @@
-import { ApolloServer, gql } from 'apollo-server-express'
-import { ApolloServerExpressConfig } from 'apollo-server-express'
+import {
+  ApolloServer,
+  gql,
+  ApolloServerExpressConfig,
+} from 'apollo-server-express'
 import { DocumentNode } from 'graphql'
 import depthLimit from 'graphql-depth-limit'
 import { createRateLimitDirective } from 'graphql-rate-limit'
@@ -7,7 +10,7 @@ import { PubSub } from 'graphql-subscriptions'
 
 import {
   resolvers as accountResolvers,
-  typeDefs as accountTypeDefs,
+  schema as accountSchema,
 } from './modules/account'
 import schema from './schema'
 
@@ -55,7 +58,7 @@ const createApolloServer = ({
     typeDefs: [
       rateLimitTypeDefs,
       schema,
-      accountTypeDefs,
+      accountSchema,
       ...(Array.isArray(typeDefs) ? typeDefs : [typeDefs]),
     ] as DocumentNode | DocumentNode[] | string | string[],
     resolvers: [

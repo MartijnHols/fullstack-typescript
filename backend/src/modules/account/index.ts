@@ -3,5 +3,5 @@ import Session from './models/Session'
 
 export const models = [Account, Session]
 
-export * from './resolvers'
 export { default as resolvers } from './resolvers'
+export { default as schema } from './schema'

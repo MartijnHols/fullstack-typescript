@@ -26,13 +26,17 @@ The modular structure makes it easier to develop a new feature or extend an exis
 
 # Testing
 
-Make integration tests on each `mutation` and `query`.
+Make integration tests on each mutation and query via Apollo. Do not test the mutation/query functions directly. They should be treated as irrelevant implementation details.
+
+This does make the projected locked-in on GraphQL (and to a lesser extend apollo-server). This is a necessary sacrifice as type issues in the schema are a common cause for bugs.
+
+It could be considered to test both the mutation/query functions and the Apollo-Server. Usually the duplicated tests would not be worth it as both would need to test the exact same things. It is more important to test the GraphQL calls as more issues can be prevented in doing so, and keeping duplicate code in sync is hard and a waste of effort.
 
 ## Run in band / database testing
 
 Tests need to "run in band" in order to prevent conflicts with database interactions.
 
-We test on an actual test database to keep things as real as possible and make it possible to replace our ORM without having to rewrite our tests.
+Tests are ran on an actual test database to keep things as real as possible and make it possible to replace our ORM without having to rewrite our tests.
 
 ## Do not mock code
 

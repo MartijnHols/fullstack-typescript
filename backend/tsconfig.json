@@ -1,6 +1,7 @@
 {
   "extends": "../tsconfig",
   "include": ["src", "types"],
+  "exclude": ["**/*.test.ts"],
   "compilerOptions": {
     "module": "commonjs",
     // Necessary for https://github.com/RobinBuschmann/sequelize-typescript#installation
