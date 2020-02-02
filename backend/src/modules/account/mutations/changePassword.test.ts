@@ -22,6 +22,11 @@ it('throws for an invalid current password', async () => {
     changePassword('test@example.nl', 'invalid', 'test1234'),
   ).rejects.toThrow()
 })
+it('throws for an unsafe new password', async () => {
+  await expect(
+    changePassword('test@example.nl', 'invalid', 'test'),
+  ).rejects.toThrow()
+})
 it("doesn't change the password on an invalid current password", async () => {
   await expect(
     changePassword('test@example.nl', 'invalid', 'test1234'),

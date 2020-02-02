@@ -1,8 +1,8 @@
 import { IResolvers, gql } from 'apollo-server-express'
 
-import changePassword from './actions/changePassword'
-import login from './actions/login'
-import register from './actions/register'
+import changePassword from './mutations/changePassword'
+import login from './mutations/login'
+import register from './mutations/register'
 import Account from './models/Account'
 import SessionID from './SessionID'
 
