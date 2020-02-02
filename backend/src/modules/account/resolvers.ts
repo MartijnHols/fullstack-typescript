@@ -15,11 +15,6 @@ export const typeDefs = gql`
     lastSeenAt: String!
   }
 
-  extend type Query {
-    accounts: [Account!]
-    account(id: ID!): Account
-  }
-
   extend type Mutation {
     register(email: String!): Account
       @rateLimitBurst(window: "1s", max: 1)
@@ -37,20 +32,7 @@ export const typeDefs = gql`
   }
 `
 
-// TODO: Remove these as they're just for PoC
-const getAccounts = () => Account.findAll()
-const getAccountById = (id: number) =>
-  Account.findOne({
-    where: {
-      id,
-    },
-  })
-
 const resolverMap: IResolvers = {
-  Query: {
-    accounts: () => getAccounts(),
-    account: (_, { id }: { id: number }) => getAccountById(id),
-  },
   Mutation: {
     register: async (_, { email }: { email: string }) => register(email),
     login: async (
