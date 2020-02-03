@@ -1,8 +1,9 @@
 import { gql } from 'apollo-server-express'
 
 // TODO: Make root ~ import possible
-import createTestClient, { Mutate } from '../../../utils/createTestClient'
-import setupDatabaseTests from '../../../utils/setupDatabaseTests'
+import createTestClient, { Mutate } from '~/utils/createTestClient'
+import setupDatabaseTests from '~/utils/setupDatabaseTests'
+
 import Session from '../models/Session'
 import createSession from '../mutations/_createSession'
 import resolvers from '../resolvers'

@@ -1,14 +1,14 @@
-// TODO: Make root ~ import possible
 import { gql } from 'apollo-server-express'
 
-import createTestClient, { Mutate } from '../../../utils/createTestClient'
-import setupDatabaseTests from '../../../utils/setupDatabaseTests'
+import createTestClient, { Mutate } from '~/utils/createTestClient'
+import setupDatabaseTests from '~/utils/setupDatabaseTests'
+
 import Account from '../models/Account'
 import resolvers from '../resolvers'
 import schema from '../schema'
 import hashPassword from '../utils/hashPassword'
 
-import '../../../tests/toBeAJSONDateTime'
+import '~/tests/toBeAJSONDateTime'
 
 setupDatabaseTests()
 

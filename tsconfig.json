@@ -14,6 +14,12 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": true,
+    // These are overwritten in each workspace. They serve to get WebStorm to behave itself, since it has no monorepo
+    // support.
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./backend/src/*"]
+    }
   }
 }

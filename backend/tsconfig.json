@@ -7,6 +7,12 @@
     // Necessary for https://github.com/RobinBuschmann/sequelize-typescript#installation
     "target": "es6",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    // Add ~/ root import.
+    // When changing this, you also need to update jest.config.js.
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   }
 }
