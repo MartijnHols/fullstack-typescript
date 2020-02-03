@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/dooc.iml" filepath="$PROJECT_DIR$/.idea/dooc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/fullstack-typescript.iml" filepath="$PROJECT_DIR$/.idea/fullstack-typescript.iml" />
     </modules>
   </component>
 </project>
