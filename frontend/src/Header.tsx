@@ -2,9 +2,9 @@ import styled from '@emotion/styled'
 import React, { ComponentProps, ReactNode } from 'react'
 import { useHistory } from 'react-router-dom'
 
-import TransparentButton from './components/TransparentButton'
 import Icon from './components/Icon'
 import { ReactComponent as BackIcon } from './icons/todo.svg'
+import Button from './input/Button'
 import * as colors from './theme/colors'
 
 const Container = styled.header`
@@ -22,7 +22,7 @@ const Pane = styled.div`
   flex-direction: column;
   justify-content: center;
 `
-const BackButton = styled(TransparentButton)`
+const BackButton = styled(Button)`
   flex: 0 0 auto;
   line-height: 1;
   padding: 0;
@@ -59,7 +59,7 @@ const Header = ({ children, back, leftPane, actions, ...others }: Props) => {
     <Container {...others}>
       {back && (
         <Pane>
-          <BackButton onClick={history.goBack}>
+          <BackButton variant="transparent" onClick={history.goBack}>
             <Icon component={BackIcon} />
           </BackButton>
         </Pane>

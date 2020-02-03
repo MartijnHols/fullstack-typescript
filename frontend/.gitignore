@@ -10,3 +10,5 @@
 # lingui
 /src/locales/_build/
 /src/locales/**/*.js
+# We put a copy in the types directory. Waiting for CRA to fix the bug that creates this automatically
+/src/react-app-env.d.ts

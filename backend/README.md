@@ -20,7 +20,7 @@ It may help to think of each module as a separate package. When your project gro
 
 ## Why not group by type?
 
-Grouping by file type makes it very easy to organize your code. This comes with a big downside however, as it will make the project harder to maintain as it grows. A `createAccount` mutation should have no relevancy with `createInvoice`. A modular structure forces you to think about how to group your code. A good structure will help you filter away all the irrelevant bits.
+Grouping by file type makes it very easy to organize your code. This comes with a big downside however, as it will make the project harder to maintain as it grows. A `createAccount` mutation should have no relevancy with `createInvoice`. A modular structure forces you to think about how to separate your code and discourages mixing responsibilities. A good structure will help you filter away all the irrelevant bits.
 
 The modular structure makes it easier to develop a new feature or extend an existing one as all irrelevant pieces are elsewhere. A module can be small. Some modules might have no more than 5 mutations, while the entire application could easily grow to have more than 50 mutations.
 
