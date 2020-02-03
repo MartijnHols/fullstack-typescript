@@ -1,4 +1,5 @@
 import { IResolvers } from 'apollo-server-express'
+import { DateTimeResolver } from 'graphql-scalars'
 
 import changePassword from './mutations/changePassword'
 import login from './mutations/login'
@@ -8,6 +9,7 @@ import SessionID from './SessionID'
 
 const resolverMap: IResolvers = {
   SessionID,
+  DateTime: DateTimeResolver,
   Mutation: {
     register: async (_, { email }: { email: string }): Promise<Account> =>
       register(email),

@@ -1,4 +1,5 @@
-import { GraphQLError } from 'graphql'
+import { ApolloError } from 'apollo-server-express'
+
 import Session from '../models/Session'
 import isValidPassword from '../utils/isPasswordValid'
 import authenticateAccount from './_authenticateAccount'
@@ -10,7 +11,10 @@ const changePassword = async (
   newPassword: string,
 ): Promise<string> => {
   if (!isValidPassword(newPassword)) {
-    throw new GraphQLError('The new password does not meet the requirements')
+    throw new ApolloError(
+      'The new password does not meet the requirements',
+      'unsafe-password',
+    )
   }
   const account = await authenticateAccount(email, currentPassword)
   await account.setPassword(newPassword)

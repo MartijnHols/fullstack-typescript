@@ -8,7 +8,7 @@ const validate = (value: any) => {
   }
 
   if (!GUID_REGEX.test(value)) {
-    throw new TypeError(`Value is not a valid GUID: ${value}`)
+    throw new TypeError(`Value is not a valid SessionID: ${value}`)
   }
 
   return value

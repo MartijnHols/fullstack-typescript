@@ -1935,6 +1935,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.1.1.tgz#6d11a8c2d58405b3db9388ab740106cbfa64c3c9"
   integrity sha512-hx6zWtudh3Arsbl3cXay+JnkvVgCKzCWKv42C9J01N2T2np4h8w5X8u6Tpz5mj38kE3M9FM0Pazx8vKFFMnjLQ==
 
+"@types/node@12.12.24":
+  version "12.12.24"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-12.12.24.tgz#d4606afd8cf6c609036b854360367d1b2c78931f"
+  integrity sha512-1Ciqv9pqwVtW6FsIUKSZNB82E5Cu1I2bBTj1xuIHXLe/1zYLl3956Nbhg2MzSYHVfl9/rmanjbQIb7LibfCnug==
+
 "@types/node@>=6":
   version "13.1.6"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.1.6.tgz#076028d0b0400be8105b89a0a55550c86684ffec"
@@ -6537,6 +6542,13 @@ graphql-rate-limit@^2.0.1:
     graphql-tools "^4.0.3"
     lodash.get "^4.4.2"
     ms "^2.1.1"
+
+graphql-scalars@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/graphql-scalars/-/graphql-scalars-1.0.6.tgz#7fd9bcc51116f9cebb03a27508d8e5b605675f92"
+  integrity sha512-HrXDZyC1dxp858TaNBNEDhUnwT5C4LwStZOXwSAQ+1h2Xl8aPrCy9M4ASu/ymBpo97sFAjSuNAJklfZedLABJg==
+  dependencies:
+    "@types/node" "12.12.24"
 
 graphql-shield@^6.0.2:
   version "6.1.0"
