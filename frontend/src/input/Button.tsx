@@ -9,12 +9,12 @@ const StyledButton = styled.button`
   background: ${colors.primary};
   color: #fff;
   font-size: 16px;
-  padding: 0.4em;
+  padding: 0.4em 1.2em;
   border-radius: 3px;
-  border: 1px solid transparent;
+  border: 0;
 
   :hover {
-    filter: brightness(150%);
+    background: ${colors.primary400};
     cursor: pointer;
   }
 `

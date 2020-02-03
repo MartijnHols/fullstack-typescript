@@ -21,11 +21,11 @@ export default gql`
       @rateLimitBurst(window: "1s", max: 1)
       @rateLimitSustained(window: "1d", max: 1000)
     """
-    Login with the email and password. Upon success, returns a session ID.
-    Expected errors: no-account, invalid-password
+    Login with a username and password. Upon success, returns a session ID.
+    Expected errors: invalid-username, invalid-password
     Rate limited.
     """
-    login(email: String!, password: String!): SessionID
+    login(username: String!, password: String!): SessionID
       @rateLimitBurst(window: "1s", max: 5)
       @rateLimitSustained(window: "1d", max: 5000)
     """

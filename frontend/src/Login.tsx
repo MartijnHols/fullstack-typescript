@@ -1,9 +1,9 @@
+import { useApolloClient } from '@apollo/react-hooks'
 import styled from '@emotion/styled'
 import { Trans } from '@lingui/macro'
+import { gql } from 'apollo-boost'
 import React, { useCallback, useRef } from 'react'
 import { Form, Field } from 'react-final-form'
-
-import sleep from './utils/sleep'
 
 import Input from './components/Input'
 import Submit from './input/Submit'
@@ -17,9 +17,18 @@ const StyledForm = styled.form`
 const Heading = styled.h1`
   text-align: center;
 `
+const Label = styled.label`
+  display: block;
+  margin-bottom: 15px;
+`
 const FieldError = styled.small`
   color: red;
 `
+
+interface FormValues {
+  username: string
+  password: string
+}
 
 const Login = () => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -30,15 +39,34 @@ const Login = () => {
     inputRef.current.focus()
   }, [inputRef])
 
-  const handleSubmit = useCallback(async values => {
-    console.log(values)
-
-    await sleep(5000)
-  }, [])
+  const client = useApolloClient()
+  const handleSubmit = useCallback(
+    async ({ username, password }: FormValues) => {
+      try {
+        await client.mutate<
+          string,
+          {
+            username: string
+            password: string
+          }
+        >({
+          mutation: gql`
+            mutation($username: String!, $password: String!) {
+              login(username: $username, password: $password)
+            }
+          `,
+          variables: { username, password },
+        })
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    [client],
+  )
 
   return (
     <PageWrapper>
-      <Form onSubmit={handleSubmit}>
+      <Form<FormValues> onSubmit={handleSubmit}>
         {({ handleSubmit, submitting }) => (
           <StyledForm onSubmit={handleSubmit}>
             <Heading>
@@ -46,30 +74,33 @@ const Login = () => {
             </Heading>
             <Field name="username">
               {({ input, meta }) => (
-                <label>
+                <Label>
                   <Trans id="login.username">Username</Trans>:{' '}
                   <Input
                     {...input}
                     type="text"
-                    name="username"
+                    autoComplete="username"
                     ref={inputRef}
                   />
                   {meta.touched && meta.error && (
                     <FieldError>{meta.error}</FieldError>
                   )}
-                </label>
+                </Label>
               )}
             </Field>
-            <br />
-            <Field name="username">
+            <Field name="password">
               {({ input, meta }) => (
-                <label>
+                <Label>
                   <Trans id="login.password">Password</Trans>:{' '}
-                  <Input {...input} type="password" name="password" />
+                  <Input
+                    {...input}
+                    type="password"
+                    autoComplete="current-password"
+                  />
                   {meta.touched && meta.error && (
                     <FieldError>{meta.error}</FieldError>
                   )}
-                </label>
+                </Label>
               )}
             </Field>
             <Submit loading={submitting}>

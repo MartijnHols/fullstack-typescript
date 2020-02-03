@@ -1,4 +1,6 @@
+import { ApolloProvider } from '@apollo/react-hooks'
 import styled from '@emotion/styled'
+import ApolloClient from 'apollo-boost'
 import React from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import 'sanitize.css'
@@ -16,6 +18,10 @@ const Container = styled.div`
   font-size: 14px;
 `
 
+const apolloClient = new ApolloClient({
+  uri: 'http://localhost:4000/graphql',
+})
+
 const App = () => {
   const isEnglish =
     window.location.pathname === '/en' ||
@@ -24,9 +30,11 @@ const App = () => {
   return (
     <Container>
       <I18nProvider language={isEnglish ? Language.English : Language.Dutch}>
-        <BrowserRouter basename={isEnglish ? '/en' : ''}>
-          <Router />
-        </BrowserRouter>
+        <ApolloProvider client={apolloClient}>
+          <BrowserRouter basename={isEnglish ? '/en' : ''}>
+            <Router />
+          </BrowserRouter>
+        </ApolloProvider>
       </I18nProvider>
     </Container>
   )
