@@ -1,4 +1,4 @@
-import { css } from '@emotion/core'
+import { css, keyframes } from '@emotion/core'
 import styled from '@emotion/styled'
 import React, { ButtonHTMLAttributes, ReactNode } from 'react'
 
@@ -7,7 +7,7 @@ import * as colors from '../theme/colors'
 
 const StyledButton = styled.button`
   background: ${colors.primary};
-  color: #fff;
+  color: ${colors.grey050};
   font-size: 16px;
   padding: 0.4em 1.2em;
   border-radius: 3px;
@@ -30,11 +30,12 @@ const transparentTheme = css`
     cursor: pointer;
   }
 `
+const disappearTextAnimation = keyframes`
+  from { color: ${colors.grey050} } 
+  to { color: transparent }
+`
 const loadingCss = css`
-  color: transparent;
-  :before {
-    content: '';
-  }
+  animation: ${disappearTextAnimation} 200ms both ease-out;
 `
 const LoadingContainer = styled.div`
   display: inline-block;

@@ -26,7 +26,7 @@ const Container = styled<'div', { color: string; size: number }>('div', {
   height: ${props => props.size}px;
   transform: rotate(45deg);
   transform-origin: 50% 50%;
-  animation: ${fadeInAnimation} 200ms forwards ease-out;
+  animation: ${fadeInAnimation} 200ms both ease-out;
 
   div {
     top: ${props => (props.size / 80) * 32}px;
