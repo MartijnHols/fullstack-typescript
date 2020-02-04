@@ -76,6 +76,7 @@ const createApolloServer = ({
       },
     },
     validationRules: [depthLimit(10)],
+    context: ({ req }) => ({ req }),
     ...others,
   })
 
