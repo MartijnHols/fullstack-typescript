@@ -32,7 +32,7 @@ it('throws for an invalid email address', async () => {
     mutate({
       mutation: gql`
         mutation {
-          register(email: "test@example") {
+          register(username: "test@example") {
             id
             email
             verified
@@ -51,7 +51,7 @@ it('throws for an existing email address', async () => {
     mutate({
       mutation: gql`
         mutation {
-          register(email: "${EXISTING_ACCOUNT_EMAIL}") {
+          register(username: "${EXISTING_ACCOUNT_EMAIL}") {
             id
             email
             verified
@@ -70,7 +70,7 @@ it('succeeds given a proper new email address', async () => {
   const { data } = await mutate({
     mutation: gql`
         mutation {
-            register(email: "${NEW_ACCOUNT_EMAIL}") {
+            register(username: "${NEW_ACCOUNT_EMAIL}") {
                 id
                 email
                 verified

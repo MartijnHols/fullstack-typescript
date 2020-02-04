@@ -8,6 +8,9 @@ import createApolloServer, {
   SOMETHING_CHANGED_TOPIC,
 } from './createApolloServer'
 
+// Initialize the connection right away so we can use models directly
+import './sequelize'
+
 const graphqlPath = '/graphql'
 
 function createServerInfo(server: http.Server, subscriptionsPath?: string) {

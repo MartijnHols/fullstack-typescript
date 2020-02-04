@@ -14,10 +14,10 @@ export default gql`
   extend type Mutation {
     """
     Register a new account.
-    Expected errors: email-exists
+    Expected errors: email-already-used
     Rate limited.
     """
-    register(email: String!): Account
+    register(username: String!): Account
       @rateLimitBurst(window: "1s", max: 1)
       @rateLimitSustained(window: "1d", max: 1000)
     """
@@ -36,7 +36,7 @@ export default gql`
     Rate limited.
     """
     changePassword(
-      email: String!
+      username: String!
       currentPassword: String!
       newPassword: String!
     ): SessionID

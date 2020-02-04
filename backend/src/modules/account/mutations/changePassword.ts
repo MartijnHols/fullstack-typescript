@@ -6,7 +6,7 @@ import authenticateAccount from './_authenticateAccount'
 import createSession from './_createSession'
 
 const changePassword = async (
-  email: string,
+  username: string,
   currentPassword: string,
   newPassword: string,
 ): Promise<string> => {
@@ -16,7 +16,7 @@ const changePassword = async (
       'unsafe-password',
     )
   }
-  const account = await authenticateAccount(email, currentPassword)
+  const account = await authenticateAccount(username, currentPassword)
   await account.setPassword(newPassword)
   await Promise.all([
     account.save(),

@@ -34,7 +34,7 @@ it('throws for an invalid current password', async () => {
       mutation: gql`
         mutation {
           changePassword(
-            email: "test@example.nl"
+            username: "test@example.nl"
             currentPassword: "not my password"
             newPassword: "test1234"
           )
@@ -57,7 +57,7 @@ it('throws for an unsafe new password', async () => {
       mutation: gql`
         mutation {
           changePassword(
-            email: "test@example.nl"
+            username: "test@example.nl"
             currentPassword: "not my password"
             newPassword: "test"
           )
@@ -73,7 +73,7 @@ it('changes the password given a correct current password', async () => {
     mutation: gql`
       mutation {
         changePassword(
-          email: "test@example.nl"
+          username: "test@example.nl"
           currentPassword: "valid"
           newPassword: "test1234"
         )
@@ -104,7 +104,7 @@ it('invalidates all sessions and starts a new one', async () => {
     mutation: gql`
       mutation {
         changePassword(
-          email: "test@example.nl"
+          username: "test@example.nl"
           currentPassword: "valid"
           newPassword: "test1234"
         )

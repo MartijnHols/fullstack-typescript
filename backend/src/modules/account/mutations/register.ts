@@ -1,8 +1,8 @@
 import Account from '../models/Account'
 import createAccount from './_createAccount'
 
-const register = async (email: string): Promise<Account> => {
-  const account = await createAccount(email)
+const register = async (username: string): Promise<Account> => {
+  const account = await createAccount(username)
 
   // TODO: Send verification email
 

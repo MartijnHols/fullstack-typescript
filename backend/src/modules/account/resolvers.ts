@@ -11,20 +11,21 @@ const resolverMap: IResolvers = {
   SessionID,
   DateTime: DateTimeResolver,
   Mutation: {
-    register: async (_, { email }: { email: string }): Promise<Account> =>
-      register(email),
+    register: async (_, { username }: { username: string }): Promise<Account> =>
+      register(username),
     login: async (
       obj,
-      { email, password }: { email: string; password: string },
-    ): Promise<string> => login(email, password),
+      { username, password }: { username: string; password: string },
+    ): Promise<string> => login(username, password),
     changePassword: async (
       obj,
       {
-        email,
+        username,
         currentPassword,
         newPassword,
-      }: { email: string; currentPassword: string; newPassword: string },
-    ): Promise<string> => changePassword(email, currentPassword, newPassword),
+      }: { username: string; currentPassword: string; newPassword: string },
+    ): Promise<string> =>
+      changePassword(username, currentPassword, newPassword),
   },
 }
 

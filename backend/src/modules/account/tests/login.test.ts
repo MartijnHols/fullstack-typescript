@@ -28,7 +28,7 @@ it('fails on invalid credentials', async () => {
     mutate({
       mutation: gql`
         mutation {
-          login(email: "test@example.nl", password: "not my password")
+          login(username: "test@example.nl", password: "not my password")
         }
       `,
     }),
@@ -37,7 +37,7 @@ it('fails on invalid credentials', async () => {
 describe('valid credentials', () => {
   const mutation = gql`
     mutation {
-      login(email: "test@example.nl", password: "valid")
+      login(username: "test@example.nl", password: "valid")
     }
   `
   it('succeeds on valid credentials', async () => {

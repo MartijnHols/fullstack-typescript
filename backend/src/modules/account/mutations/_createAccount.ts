@@ -2,21 +2,21 @@ import { ApolloError } from 'apollo-server-express'
 
 import Account from '../models/Account'
 
-const createAccount = async (email: string) => {
+const createAccount = async (username: string) => {
   const existingAccount = await Account.findOne({
     where: {
-      email,
+      email: username,
     },
   })
   if (existingAccount) {
     throw new ApolloError(
       'This email address is already in use',
-      'email-exists',
+      'email-already-used',
     )
   }
 
   const account = new Account()
-  account.email = email
+  account.email = username
   return account.save()
 }
 
