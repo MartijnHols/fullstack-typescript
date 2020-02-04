@@ -1,12 +1,11 @@
-import { useApolloClient } from '@apollo/react-hooks'
 import styled from '@emotion/styled'
 import { Trans } from '@lingui/macro'
-import { gql } from 'apollo-boost'
 import React, { useCallback, useRef } from 'react'
 import { Form, Field } from 'react-final-form'
 
 import Input from './components/Input'
 import Submit from './input/Submit'
+import useLogin from './mutations/useLogin'
 import PageWrapper from './PageWrapper'
 
 const StyledForm = styled.form`
@@ -39,29 +38,18 @@ const Login = () => {
     inputRef.current.focus()
   }, [inputRef])
 
-  const client = useApolloClient()
+  const [login] = useLogin()
   const handleSubmit = useCallback(
     async ({ username, password }: FormValues) => {
       try {
-        await client.mutate<
-          string,
-          {
-            username: string
-            password: string
-          }
-        >({
-          mutation: gql`
-            mutation($username: String!, $password: String!) {
-              login(username: $username, password: $password)
-            }
-          `,
+        await login({
           variables: { username, password },
         })
       } catch (error) {
         console.log(error)
       }
     },
-    [client],
+    [login],
   )
 
   return (
