@@ -15,25 +15,31 @@ const heartBeatAnimation = keyframes`
   39% { transform: scale(0.85); }
   45% { transform: scale(1); }
   60% { transform: scale(0.95); }
-  100% { transform: scale(0.9); }`
-const Container = styled<'div', { color: string; size: number }>('div', {
-  shouldForwardProp: prop => prop !== 'color' && prop !== 'size',
-})`
+  100% { transform: scale(0.9); }
+`
+const formatSize = (size: number | string) =>
+  typeof size === 'number' ? `${size}px` : size
+const Container = styled<'div', { color: string; size: number | string }>(
+  'div',
+  {
+    shouldForwardProp: prop => prop !== 'color' && prop !== 'size',
+  },
+)`
   // Source: https://loading.io/css/
   display: inline-block;
   position: relative;
-  width: ${props => props.size}px;
-  height: ${props => props.size}px;
+  width: ${props => formatSize(props.size)};
+  height: ${props => formatSize(props.size)};
   transform: rotate(45deg);
   transform-origin: 50% 50%;
   animation: ${fadeInAnimation} 200ms both ease-out;
 
   div {
-    top: ${props => (props.size / 80) * 32}px;
-    left: ${props => (props.size / 80) * 32}px;
+    top: calc(0.4 * ${props => formatSize(props.size)});
+    left: calc(0.4 * ${props => formatSize(props.size)});
     position: absolute;
-    width: ${props => (props.size / 80) * 32}px;
-    height: ${props => (props.size / 80) * 32}px;
+    width: calc(0.4 * ${props => formatSize(props.size)});
+    height: calc(0.4 * ${props => formatSize(props.size)});
     background: ${props => props.color};
     animation: ${heartBeatAnimation} 1.2s infinite
       cubic-bezier(0.215, 0.61, 0.355, 1);
@@ -43,23 +49,23 @@ const Container = styled<'div', { color: string; size: number }>('div', {
     content: ' ';
     position: absolute;
     display: block;
-    width: ${props => (props.size / 80) * 32}px;
-    height: ${props => (props.size / 80) * 32}px;
+    width: calc(0.4 * ${props => formatSize(props.size)});
+    height: calc(0.4 * ${props => formatSize(props.size)});
     background: ${props => props.color};
   }
   div:before {
-    left: -${props => (props.size / 80) * 24}px;
+    left: calc(-0.3 * ${props => formatSize(props.size)});
     border-radius: 50% 0 0 50%;
   }
   div:after {
-    top: -${props => (props.size / 80) * 24}px;
+    top: calc(-0.3 * ${props => formatSize(props.size)});
     border-radius: 50% 50% 0 0;
   }
 `
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
   color?: string
-  size?: number
+  size?: number | string
 }
 
 const Loader = ({ color = heartColor, size = 80, ...others }: Props) => (

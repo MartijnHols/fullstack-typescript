@@ -77,7 +77,7 @@ const Button = ({
     return (
       <LoadingContainer>
         <LoaderPositioner>
-          <Loader color={colors.grey050} size={32} />
+          <Loader color={colors.grey050} size="1.8em" />
         </LoaderPositioner>
         {button}
       </LoadingContainer>
