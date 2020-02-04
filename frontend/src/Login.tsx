@@ -91,7 +91,7 @@ const Login = () => {
                 </Label>
               )}
             </Field>
-            <Submit loading={submitting}>
+            <Submit loading={submitting} disabled={submitting}>
               <Trans id="login.submit">Login</Trans>
             </Submit>
           </StyledForm>
