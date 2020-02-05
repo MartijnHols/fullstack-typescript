@@ -80,10 +80,16 @@ class Account extends Model<Account> {
   }
   async validatePassword(value: string) {
     if (!this.passwordHash) {
-      throw new Error('User has no password and can not login yet')
+      return false
     }
 
     return await validatePassword(value, this.passwordHash)
+  }
+  get hasPassword() {
+    if (this.passwordHash === undefined) {
+      throw new Error('passwordHash field is not available')
+    }
+    return this.passwordHash !== null
   }
 }
 
