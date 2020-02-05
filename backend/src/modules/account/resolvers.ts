@@ -5,31 +5,44 @@ import changePassword from './mutations/changePassword'
 import login from './mutations/login'
 import register from './mutations/register'
 import SessionID from './SessionID'
-import { Resolvers } from './schema'
+import { LoginResponse, RegisterResponse, Resolvers } from './schema'
 
-const resolverMap: Omit<Resolvers<{}>, 'Account' | 'LoginResponse'> = {
+async function makeResponse<
+  ResponseFormat extends { [key: string]: PromiseResult } & {
+    error: string | null
+  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  PromiseResult extends any = any
+>(fieldName: keyof ResponseFormat, promise: Promise<PromiseResult>) {
+  try {
+    const result = await promise
+    return {
+      [fieldName]: result,
+      error: null,
+    } as ResponseFormat
+  } catch (err) {
+    if (err instanceof ApolloError) {
+      return {
+        [fieldName]: null,
+        error: err.extensions.code,
+      } as ResponseFormat
+    } else {
+      throw err
+    }
+  }
+}
+
+const resolverMap: Omit<
+  Resolvers<{}>,
+  'Account' | 'RegisterResponse' | 'LoginResponse'
+> = {
   SessionID,
   DateTime: DateTimeResolver,
   Mutation: {
-    register: async (_, { username }) => register(username),
-    login: async (_, { username, password }) => {
-      try {
-        const sessionId = await login(username, password)
-        return {
-          sessionId,
-          error: null,
-        }
-      } catch (err) {
-        if (err instanceof ApolloError) {
-          return {
-            sessionId: null,
-            error: err.extensions.code,
-          }
-        } else {
-          throw err
-        }
-      }
-    },
+    register: async (_, { username }) =>
+      makeResponse<RegisterResponse>('account', register(username)),
+    login: async (_, { username, password }) =>
+      makeResponse<LoginResponse>('sessionId', login(username, password)),
     changePassword: async (_, { username, currentPassword, newPassword }) =>
       changePassword(username, currentPassword, newPassword),
   },

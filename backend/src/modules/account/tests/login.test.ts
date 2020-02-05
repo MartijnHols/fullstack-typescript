@@ -16,7 +16,7 @@ beforeEach(async () => {
     email: 'test@example.nl',
     passwordHash: await hashPassword('valid'),
   })
-  const testClient = createTestClient({})
+  const testClient = createTestClient()
   mutate = testClient.mutate
 })
 it('fails on invalid credentials', async () => {

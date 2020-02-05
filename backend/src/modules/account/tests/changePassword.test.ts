@@ -6,9 +6,7 @@ import setupDatabaseTests from '~/utils/setupDatabaseTests'
 
 import Session from '../models/Session'
 import createSession from '../mutations/_createSession'
-import resolvers from '../resolvers'
 import Account from '../models/Account'
-import schema from '../schema'
 import hashPassword from '../utils/hashPassword'
 
 setupDatabaseTests()
@@ -22,10 +20,7 @@ beforeEach(async () => {
     email: 'test@example.nl',
     passwordHash,
   })
-  const testClient = createTestClient({
-    typeDefs: schema,
-    resolvers,
-  })
+  const testClient = createTestClient()
   mutate = testClient.mutate
 })
 it('throws for an invalid current password', async () => {

@@ -15,7 +15,7 @@ export type Query = (
 ) => Promise<GraphQLResponse>
 
 export default function createTestClient(
-  options: Parameters<typeof createApolloServer>[0],
+  options: Parameters<typeof createApolloServer>[0] = {},
 ): {
   mutate: Mutate
   query: Query

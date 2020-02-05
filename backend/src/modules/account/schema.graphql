@@ -1,3 +1,5 @@
+# Run `yarn codegen` in the backend folder when making changes to this file to update schema.ts.
+
 scalar DateTime
 scalar SessionID
 type Account {
@@ -28,13 +30,22 @@ extend type Mutation {
     @rateLimitSustained(window: "1d", max: 5000)
 }
 
+enum RegisterError {
+  "Username is incorrectly formatted. It should be a valid email address."
+  INVALID_USERNAME
+  USERNAME_ALREADY_EXISTS
+}
+type RegisterResponse {
+  account: Account
+  error: RegisterError
+}
 extend type Mutation {
   """
   Register a new account.
   Expected errors: email-already-used
   Rate limited.
   """
-  register(username: String!): Account!
+  register(username: String!): RegisterResponse!
     @rateLimitBurst(window: "1s", max: 1)
     @rateLimitSustained(window: "1d", max: 1000)
 }

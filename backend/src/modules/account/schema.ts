@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   GraphQLResolveInfo,
   GraphQLScalarType,
@@ -61,7 +62,7 @@ export interface Mutation {
    * Expected errors: email-already-used
    * Rate limited.
    */
-  register: Account
+  register: RegisterResponse
 }
 
 export interface MutationChangePasswordArgs {
@@ -77,6 +78,18 @@ export interface MutationLoginArgs {
 
 export interface MutationRegisterArgs {
   username: Scalars['String']
+}
+
+export enum RegisterError {
+  /** Username is incorrectly formatted. It should be a valid email address. */
+  INVALID_USERNAME = 'INVALID_USERNAME',
+  USERNAME_ALREADY_EXISTS = 'USERNAME_ALREADY_EXISTS',
+}
+
+export interface RegisterResponse {
+  __typename?: 'RegisterResponse'
+  account: Maybe<Account>
+  error: Maybe<RegisterError>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -187,10 +200,12 @@ export type ResolversTypes = {
   SessionID: ResolverTypeWrapper<Scalars['SessionID']>
   LoginResponse: ResolverTypeWrapper<LoginResponse>
   LoginError: LoginError
+  RegisterResponse: ResolverTypeWrapper<RegisterResponse>
   Account: ResolverTypeWrapper<Account>
   ID: ResolverTypeWrapper<Scalars['ID']>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
+  RegisterError: RegisterError
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -200,10 +215,12 @@ export type ResolversParentTypes = {
   SessionID: Scalars['SessionID']
   LoginResponse: LoginResponse
   LoginError: LoginError
+  RegisterResponse: RegisterResponse
   Account: Account
   ID: Scalars['ID']
   Boolean: Scalars['Boolean']
   DateTime: Scalars['DateTime']
+  RegisterError: RegisterError
 }
 
 export type AccountResolvers<
@@ -256,11 +273,24 @@ export type MutationResolvers<
     RequireFields<MutationLoginArgs, 'username' | 'password'>
   >
   register: Resolver<
-    ResolversTypes['Account'],
+    ResolversTypes['RegisterResponse'],
     ParentType,
     ContextType,
     RequireFields<MutationRegisterArgs, 'username'>
   >
+}
+
+export type RegisterResponseResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['RegisterResponse'] = ResolversParentTypes['RegisterResponse']
+> = {
+  account: Resolver<Maybe<ResolversTypes['Account']>, ParentType, ContextType>
+  error: Resolver<
+    Maybe<ResolversTypes['RegisterError']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: isTypeOfResolverFn
 }
 
 export interface SessionIdScalarConfig
@@ -273,6 +303,7 @@ export type Resolvers<ContextType = any> = {
   DateTime: GraphQLScalarType
   LoginResponse: LoginResponseResolvers<ContextType>
   Mutation: MutationResolvers<ContextType>
+  RegisterResponse: RegisterResponseResolvers<ContextType>
   SessionID: GraphQLScalarType
 }
 
