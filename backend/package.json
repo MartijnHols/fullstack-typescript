@@ -24,6 +24,7 @@
     "validator": "^12.1.0"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.12.1",
     "@types/bcrypt": "^3.0.0",
     "@types/body-parser": "^1.17.1",
     "@types/express": "^4.17.2",
@@ -41,7 +42,9 @@
     "nodemon": "^2.0.1",
     "sequelize-cli": "^5.5.1",
     "ts-jest": "^24.3.0",
-    "ts-node-dev": "^1.0.0-pre.44"
+    "ts-node-dev": "^1.0.0-pre.44",
+    "@graphql-codegen/typescript": "1.12.1",
+    "@graphql-codegen/typescript-resolvers": "1.12.1"
   },
   "scripts": {
     "start": "ts-node-dev --respawn --transpileOnly src/index.ts",
@@ -56,7 +59,8 @@
     "lint:rest": "yarn --silent lint:rest:specific '**/*.{json,md,css,scss,graphql,yml}'",
     "lint:rest:specific": "prettier --check",
     "lint:fix": "yarn --silent lint:code --fix && prettier --write '**/*.{json,md,css,scss,graphql,yml}'",
-    "db:migrate": "yarn build && rm -rf ./build/migrations/*.js.map && yarn sequelize-cli db:migrate"
+    "db:migrate": "yarn build && rm -rf ./build/migrations/*.js.map && yarn sequelize-cli db:migrate",
+    "codegen": "graphql-codegen --config codegen.yml && prettier --write ./src/modules/account/schema.ts"
   },
   "eslintConfig": {
     "extends": "../eslint-config/index.js"

@@ -1,0 +1,57 @@
+scalar DateTime
+scalar SessionID
+type Account {
+  id: ID!
+  email: String!
+  verified: Boolean!
+  createdAt: DateTime!
+  lastSeenAt: DateTime!
+}
+
+enum LoginError {
+  INVALID_USERNAME
+  ACCOUNT_UNAVAILABLE
+  INVALID_PASSWORD
+}
+type LoginResponse {
+  sessionId: SessionID
+  error: LoginError
+}
+extend type Mutation {
+  """
+  Login with a username and password. Upon success, returns a session ID.
+
+  *Rate limited.*
+  """
+  login(username: String!, password: String!): LoginResponse!
+    @rateLimitBurst(window: "1s", max: 5)
+    @rateLimitSustained(window: "1d", max: 5000)
+}
+
+extend type Mutation {
+  """
+  Register a new account.
+  Expected errors: email-already-used
+  Rate limited.
+  """
+  register(username: String!): Account!
+    @rateLimitBurst(window: "1s", max: 1)
+    @rateLimitSustained(window: "1d", max: 1000)
+}
+
+extend type Mutation {
+  """
+  Change the password for the user's account. Upon success, all existing
+  sessions will be invalidated and a new session ID will be returned that can
+  be used to replace the user's now invalidated session.
+  Expected errors: no-account, invalid-password, unsafe-password
+  Rate limited.
+  """
+  changePassword(
+    username: String!
+    currentPassword: String!
+    newPassword: String!
+  ): SessionID!
+    @rateLimitBurst(window: "1s", max: 2)
+    @rateLimitSustained(window: "1d", max: 1000)
+}

@@ -1,4 +1,5 @@
 import { ApolloError } from 'apollo-server-express'
+import { LoginError } from '../schema'
 
 import Account from '../models/Account'
 
@@ -19,11 +20,20 @@ const authenticateAccount = async (
     // important places to help the user.
     throw new ApolloError(
       `No account could be found for the username: ${username}`,
-      'invalid-username',
+      LoginError.INVALID_USERNAME,
+    )
+  }
+  if (!account.hasPassword) {
+    throw new ApolloError(
+      'This account has no password. Logging in to this account is not possible at this time.',
+      LoginError.ACCOUNT_UNAVAILABLE,
     )
   }
   if (!(await account.validatePassword(password))) {
-    throw new ApolloError('This password is invalid', 'invalid-password')
+    throw new ApolloError(
+      'This password is invalid',
+      LoginError.INVALID_PASSWORD,
+    )
   }
   return account
 }

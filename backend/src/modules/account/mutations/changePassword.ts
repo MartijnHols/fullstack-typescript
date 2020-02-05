@@ -9,7 +9,7 @@ const changePassword = async (
   username: string,
   currentPassword: string,
   newPassword: string,
-): Promise<string> => {
+) => {
   if (!isValidPassword(newPassword)) {
     throw new ApolloError(
       'The new password does not meet the requirements',
