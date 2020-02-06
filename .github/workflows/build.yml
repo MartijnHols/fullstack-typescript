@@ -35,7 +35,7 @@ jobs:
 
   backend-validate-types:
     needs: [prepare]
-    name: '[BACK] Typecheck'
+    name: '[BACKEND] Typecheck'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -49,9 +49,26 @@ jobs:
       - run: tar -xzf dependencies.tar.gz
       - run: yarn typecheck
         working-directory: backend
+  backend-tests:
+    needs: [prepare]
+    name: '[BACKEND] Tests'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+      - uses: actions/download-artifact@v1
+        with:
+          name: dependencies
+          path: .
+      - run: tar -xzf dependencies.tar.gz
+      - run: docker-compose up -d
+      - run: yarn test
+        working-directory: backend
   backend-lint:
     needs: [prepare]
-    name: '[BACK] Lint'
+    name: '[BACKEND] Lint'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -67,7 +84,7 @@ jobs:
         working-directory: backend
   backend-build:
     needs: [prepare]
-    name: '[BACK] Build'
+    name: '[BACKEND] Build'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -89,7 +106,7 @@ jobs:
 
   frontend-validate-types:
     needs: [prepare]
-    name: '[FRONT] Typecheck'
+    name: '[FRONTEND] Typecheck'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -105,7 +122,7 @@ jobs:
         working-directory: frontend
   frontend-tests:
     needs: [prepare]
-    name: '[FRONT] Tests'
+    name: '[FRONTEND] Tests'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -121,7 +138,7 @@ jobs:
         working-directory: frontend
   frontend-lint:
     needs: [prepare]
-    name: '[FRONT] Lint'
+    name: '[FRONTEND] Lint'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -137,7 +154,7 @@ jobs:
         working-directory: frontend
   frontend-build:
     needs: [prepare]
-    name: '[FRONT] Build'
+    name: '[FRONTEND] Build'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -162,8 +179,12 @@ jobs:
 #      [
 #        prepare,
 #        backend-validate-types,
+#        backend-tests,
+#        backend-lint,
 #        backend-build,
 #        frontend-validate-types,
+#        frontend-tests,
+#        frontend-lint,
 #        frontend-build,
 #      ]
 #    name: 'Publish Docker image'
