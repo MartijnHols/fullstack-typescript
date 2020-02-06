@@ -63,14 +63,17 @@ jobs:
           name: dependencies
           path: .
       - run: tar -xzf dependencies.tar.gz
+      # We need to open up port 3306
       - name: Shutdown the Default MySQL
         run: sudo service mysql stop
       - run: docker-compose up -d
+      # The database needs some time to initialize
       - run: |
           while ! docker-compose exec -T database mysqladmin --user=root --password=password --host "127.0.0.1" ping ; do
             echo "Waiting for database connection..."
             sleep 1
           done
+      # Database creation isn't a part of the migrations
       - run: docker-compose exec -T database mysql -uroot -ppassword -e"CREATE DATABASE test;"
       - run: yarn test
         working-directory: backend
