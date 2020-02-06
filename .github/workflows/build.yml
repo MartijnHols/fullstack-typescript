@@ -65,7 +65,8 @@ jobs:
       - run: tar -xzf dependencies.tar.gz
       - name: Shutdown the Default MySQL
         run: sudo service mysql stop
-      - run: sudo docker-compose up -d
+      - run: docker-compose up -d
+      - run: docker-compose exec database mysql -uroot -ppassword -e"CREATE DATABASE test;"
       - run: yarn test
         working-directory: backend
   backend-lint:
