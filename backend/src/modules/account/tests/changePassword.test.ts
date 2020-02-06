@@ -109,7 +109,9 @@ it('requires authentication', async () => {
           }
         `,
       }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`"Unauthenticated!"`)
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `"You need to be authenticated to use this endpoint."`,
+    )
   }
 })
 it('throws for an unsafe new password', async () => {

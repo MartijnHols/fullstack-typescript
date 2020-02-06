@@ -1,3 +1,4 @@
+import { ApolloError } from 'apollo-server-express'
 import { GraphQLResolveInfo } from 'graphql'
 
 import { ApolloServerContext } from '../createApolloServer'
@@ -17,7 +18,10 @@ const authenticated = <
   ) => Response,
 ) => (root: Root, args: Args, context: Context, info: Info): Response => {
   if (!context.session) {
-    throw new Error(`Unauthenticated!`)
+    throw new ApolloError(
+      'You need to be authenticated to use this endpoint.',
+      'UNAUTHENTICATED',
+    )
   }
 
   return next(
