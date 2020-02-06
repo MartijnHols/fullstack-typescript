@@ -63,6 +63,8 @@ jobs:
           name: dependencies
           path: .
       - run: tar -xzf dependencies.tar.gz
+      - name: Shutdown the Default MySQL
+        run: sudo service mysql stop
       - run: docker-compose up -d
       - run: yarn test
         working-directory: backend
