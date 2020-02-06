@@ -50,19 +50,45 @@ extend type Mutation {
     @rateLimitSustained(window: "1d", max: 1000)
 }
 
+enum ChangePasswordError {
+  UNSAFE_PASSWORD
+  UNAVAILABLE
+  INVALID_PASSWORD
+}
+type ChangePasswordResponse {
+  newSessionId: SessionID
+  error: ChangePasswordError
+}
 extend type Mutation {
   """
   Change the password for the user's account. Upon success, all existing
   sessions will be invalidated and a new session ID will be returned that can
   be used to replace the user's now invalidated session.
-  Expected errors: no-account, invalid-password, unsafe-password
-  Rate limited.
+
+  *Rate limited.*
   """
   changePassword(
-    username: String!
     currentPassword: String!
     newPassword: String!
-  ): SessionID!
+  ): ChangePasswordResponse!
+    @rateLimitBurst(window: "1s", max: 2)
+    @rateLimitSustained(window: "1d", max: 1000)
+}
+
+enum RestorePassswordError {
+  INVALID_USERNAME
+}
+type RestorePassswordResponse {
+  error: RestorePassswordError
+}
+extend type Mutation {
+  """
+  Start password restoration. Upon success, This will send an email with a
+  link that can be used to set a new password.
+
+  *Rate limited.*
+  """
+  restorePassword(username: String!): RestorePassswordResponse!
     @rateLimitBurst(window: "1s", max: 2)
     @rateLimitSustained(window: "1d", max: 1000)
 }

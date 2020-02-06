@@ -4,7 +4,8 @@ import { createTestClient, ApolloServerTestClient } from 'apollo-server-testing'
 import { GraphQLResponse } from 'apollo-server-types'
 import httpMocks from 'node-mocks-http'
 
-import createApolloServer from './createApolloServer'
+import createTestServer from './utils/createTestServer'
+
 import sleep from './utils/sleep'
 
 // In order to make it harder to execute an effective DOS attack, we use several
@@ -36,7 +37,7 @@ describe('abuse protection', () => {
           test: resolver,
         },
       }
-      const server = createApolloServer({
+      const server = createTestServer({
         typeDefs,
         resolvers,
         context: {
@@ -111,7 +112,7 @@ describe('abuse protection', () => {
           test: () => null,
         },
       }
-      const server = createApolloServer({
+      const server = createTestServer({
         typeDefs,
         resolvers,
       })

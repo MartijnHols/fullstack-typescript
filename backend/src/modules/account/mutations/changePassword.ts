@@ -1,22 +1,34 @@
 import { ApolloError } from 'apollo-server-express'
 
+import Account from '../models/Account'
 import Session from '../models/Session'
+import { ChangePasswordError } from '../schema'
 import isValidPassword from '../utils/isPasswordValid'
-import authenticateAccount from './_authenticateAccount'
 import createSession from './_createSession'
 
 const changePassword = async (
-  username: string,
+  account: Account,
   currentPassword: string,
   newPassword: string,
 ) => {
+  if (!account.hasPassword) {
+    throw new ApolloError(
+      'This account has no password. Changing password for this account is not possible at this time.',
+      ChangePasswordError.UNAVAILABLE,
+    )
+  }
+  if (!(await account.validatePassword(currentPassword))) {
+    throw new ApolloError(
+      'This password is invalid',
+      ChangePasswordError.INVALID_PASSWORD,
+    )
+  }
   if (!isValidPassword(newPassword)) {
     throw new ApolloError(
       'The new password does not meet the requirements',
-      'unsafe-password',
+      ChangePasswordError.UNSAFE_PASSWORD,
     )
   }
-  const account = await authenticateAccount(username, currentPassword)
   await account.setPassword(newPassword)
   await Promise.all([
     account.save(),

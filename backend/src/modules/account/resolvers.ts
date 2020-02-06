@@ -1,50 +1,43 @@
-import { ApolloError } from 'apollo-server-express'
 import { DateTimeResolver } from 'graphql-scalars'
+
+import { ApolloServerContext } from '~/createApolloServer'
+import authenticated from '~/utils/authenticated'
+import makeResponse from '~/utils/makeResponse'
 
 import changePassword from './mutations/changePassword'
 import login from './mutations/login'
 import register from './mutations/register'
+import restorePassword from './mutations/restorePassword'
 import SessionID from './SessionID'
-import { LoginResponse, RegisterResponse, Resolvers } from './schema'
+import {
+  ChangePasswordResponse,
+  LoginResponse,
+  RegisterResponse,
+  Resolvers,
+  RestorePassswordResponse,
+} from './schema'
 
-async function makeResponse<
-  ResponseFormat extends { [key: string]: PromiseResult } & {
-    error: string | null
-  },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  PromiseResult extends any = any
->(fieldName: keyof ResponseFormat, promise: Promise<PromiseResult>) {
-  try {
-    const result = await promise
-    return {
-      [fieldName]: result,
-      error: null,
-    } as ResponseFormat
-  } catch (err) {
-    if (err instanceof ApolloError) {
-      return {
-        [fieldName]: null,
-        error: err.extensions.code,
-      } as ResponseFormat
-    } else {
-      throw err
-    }
-  }
-}
-
-const resolverMap: Omit<
-  Resolvers<{}>,
-  'Account' | 'RegisterResponse' | 'LoginResponse'
-> = {
+const resolverMap: Partial<Resolvers<ApolloServerContext>> = {
   SessionID,
   DateTime: DateTimeResolver,
   Mutation: {
     register: async (_, { username }) =>
-      makeResponse<RegisterResponse>('account', register(username)),
+      makeResponse<RegisterResponse>(register(username), 'account'),
     login: async (_, { username, password }) =>
-      makeResponse<LoginResponse>('sessionId', login(username, password)),
-    changePassword: async (_, { username, currentPassword, newPassword }) =>
-      changePassword(username, currentPassword, newPassword),
+      makeResponse<LoginResponse>(login(username, password), 'sessionId'),
+    restorePassword: async (_, { username }) =>
+      makeResponse<RestorePassswordResponse>(restorePassword(username)),
+    changePassword: authenticated(
+      async (_, { currentPassword, newPassword }, { session }) =>
+        makeResponse<ChangePasswordResponse>(
+          changePassword(
+            await session.$get('account'),
+            currentPassword,
+            newPassword,
+          ),
+          'newSessionId',
+        ),
+    ),
   },
 }
 

@@ -3,9 +3,8 @@ import {
   createTestClient as baseCreateTestClient,
 } from 'apollo-server-testing'
 import { GraphQLResponse } from 'apollo-server-types'
-import httpMocks from 'node-mocks-http'
 
-import createApolloServer from '../createApolloServer'
+import createTestServer from './createTestServer'
 
 export type Mutate = (
   options: Omit<Parameters<ApolloServerTestClient['mutate']>[0], 'query'>,
@@ -15,19 +14,12 @@ export type Query = (
 ) => Promise<GraphQLResponse>
 
 export default function createTestClient(
-  options: Parameters<typeof createApolloServer>[0] = {},
+  ...args: Parameters<typeof createTestServer>
 ): {
   mutate: Mutate
   query: Query
 } {
-  const server = createApolloServer({
-    context: () => ({
-      req: httpMocks.createRequest({
-        ip: Date.now(),
-      }),
-    }),
-    ...options,
-  })
+  const server = createTestServer(...args)
   const { mutate, query } = baseCreateTestClient(server)
 
   return {

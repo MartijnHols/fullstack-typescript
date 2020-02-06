@@ -29,6 +29,18 @@ export interface Account {
   lastSeenAt: Scalars['DateTime']
 }
 
+export enum ChangePasswordError {
+  UNSAFE_PASSWORD = 'UNSAFE_PASSWORD',
+  UNAVAILABLE = 'UNAVAILABLE',
+  INVALID_PASSWORD = 'INVALID_PASSWORD',
+}
+
+export interface ChangePasswordResponse {
+  __typename?: 'ChangePasswordResponse'
+  newSessionId: Maybe<Scalars['SessionID']>
+  error: Maybe<ChangePasswordError>
+}
+
 export enum LoginError {
   INVALID_USERNAME = 'INVALID_USERNAME',
   ACCOUNT_UNAVAILABLE = 'ACCOUNT_UNAVAILABLE',
@@ -47,10 +59,10 @@ export interface Mutation {
    * Change the password for the user's account. Upon success, all existing
    * sessions will be invalidated and a new session ID will be returned that can
    * be used to replace the user's now invalidated session.
-   * Expected errors: no-account, invalid-password, unsafe-password
-   * Rate limited.
+   *
+   * *Rate limited.*
    */
-  changePassword: Scalars['SessionID']
+  changePassword: ChangePasswordResponse
   /**
    * Login with a username and password. Upon success, returns a session ID.
    *
@@ -63,10 +75,16 @@ export interface Mutation {
    * Rate limited.
    */
   register: RegisterResponse
+  /**
+   * Start password restoration. Upon success, This will send an email with a
+   * link that can be used to set a new password.
+   *
+   * *Rate limited.*
+   */
+  restorePassword: RestorePassswordResponse
 }
 
 export interface MutationChangePasswordArgs {
-  username: Scalars['String']
   currentPassword: Scalars['String']
   newPassword: Scalars['String']
 }
@@ -80,6 +98,10 @@ export interface MutationRegisterArgs {
   username: Scalars['String']
 }
 
+export interface MutationRestorePasswordArgs {
+  username: Scalars['String']
+}
+
 export enum RegisterError {
   /** Username is incorrectly formatted. It should be a valid email address. */
   INVALID_USERNAME = 'INVALID_USERNAME',
@@ -90,6 +112,15 @@ export interface RegisterResponse {
   __typename?: 'RegisterResponse'
   account: Maybe<Account>
   error: Maybe<RegisterError>
+}
+
+export enum RestorePassswordError {
+  INVALID_USERNAME = 'INVALID_USERNAME',
+}
+
+export interface RestorePassswordResponse {
+  __typename?: 'RestorePassswordResponse'
+  error: Maybe<RestorePassswordError>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -197,7 +228,9 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>
   String: ResolverTypeWrapper<Scalars['String']>
+  ChangePasswordResponse: ResolverTypeWrapper<ChangePasswordResponse>
   SessionID: ResolverTypeWrapper<Scalars['SessionID']>
+  ChangePasswordError: ChangePasswordError
   LoginResponse: ResolverTypeWrapper<LoginResponse>
   LoginError: LoginError
   RegisterResponse: ResolverTypeWrapper<RegisterResponse>
@@ -206,13 +239,17 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   RegisterError: RegisterError
+  RestorePassswordResponse: ResolverTypeWrapper<RestorePassswordResponse>
+  RestorePassswordError: RestorePassswordError
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Mutation: {}
   String: Scalars['String']
+  ChangePasswordResponse: ChangePasswordResponse
   SessionID: Scalars['SessionID']
+  ChangePasswordError: ChangePasswordError
   LoginResponse: LoginResponse
   LoginError: LoginError
   RegisterResponse: RegisterResponse
@@ -221,6 +258,8 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']
   DateTime: Scalars['DateTime']
   RegisterError: RegisterError
+  RestorePassswordResponse: RestorePassswordResponse
+  RestorePassswordError: RestorePassswordError
 }
 
 export type AccountResolvers<
@@ -232,6 +271,23 @@ export type AccountResolvers<
   verified: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
   createdAt: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
   lastSeenAt: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn
+}
+
+export type ChangePasswordResponseResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['ChangePasswordResponse'] = ResolversParentTypes['ChangePasswordResponse']
+> = {
+  newSessionId: Resolver<
+    Maybe<ResolversTypes['SessionID']>,
+    ParentType,
+    ContextType
+  >
+  error: Resolver<
+    Maybe<ResolversTypes['ChangePasswordError']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: isTypeOfResolverFn
 }
 
@@ -258,13 +314,10 @@ export type MutationResolvers<
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
   changePassword: Resolver<
-    ResolversTypes['SessionID'],
+    ResolversTypes['ChangePasswordResponse'],
     ParentType,
     ContextType,
-    RequireFields<
-      MutationChangePasswordArgs,
-      'username' | 'currentPassword' | 'newPassword'
-    >
+    RequireFields<MutationChangePasswordArgs, 'currentPassword' | 'newPassword'>
   >
   login: Resolver<
     ResolversTypes['LoginResponse'],
@@ -277,6 +330,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationRegisterArgs, 'username'>
+  >
+  restorePassword: Resolver<
+    ResolversTypes['RestorePassswordResponse'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationRestorePasswordArgs, 'username'>
   >
 }
 
@@ -293,6 +352,18 @@ export type RegisterResponseResolvers<
   __isTypeOf?: isTypeOfResolverFn
 }
 
+export type RestorePassswordResponseResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['RestorePassswordResponse'] = ResolversParentTypes['RestorePassswordResponse']
+> = {
+  error: Resolver<
+    Maybe<ResolversTypes['RestorePassswordError']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: isTypeOfResolverFn
+}
+
 export interface SessionIdScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes['SessionID'], any> {
   name: 'SessionID'
@@ -300,10 +371,12 @@ export interface SessionIdScalarConfig
 
 export type Resolvers<ContextType = any> = {
   Account: AccountResolvers<ContextType>
+  ChangePasswordResponse: ChangePasswordResponseResolvers<ContextType>
   DateTime: GraphQLScalarType
   LoginResponse: LoginResponseResolvers<ContextType>
   Mutation: MutationResolvers<ContextType>
   RegisterResponse: RegisterResponseResolvers<ContextType>
+  RestorePassswordResponse: RestorePassswordResponseResolvers<ContextType>
   SessionID: GraphQLScalarType
 }
 

@@ -1,11 +1,11 @@
 import { gql } from 'apollo-server-express'
+import httpMocks from 'node-mocks-http'
 
 // TODO: Make root ~ import possible
 import createTestClient, { Mutate } from '~/utils/createTestClient'
 import setupDatabaseTests from '~/utils/setupDatabaseTests'
 
 import Session from '../models/Session'
-import createSession from '../mutations/_createSession'
 import Account from '../models/Account'
 import hashPassword from '../utils/hashPassword'
 
@@ -20,23 +20,47 @@ beforeEach(async () => {
     email: 'test@example.nl',
     passwordHash,
   })
-  const testClient = createTestClient()
+  const testClient = createTestClient(
+    undefined,
+    await Session.create({
+      uniqueId: 'test',
+      accountId: account.id,
+    }),
+  )
   mutate = testClient.mutate
 })
 it('throws for an invalid current password', async () => {
-  await expect(
-    mutate({
+  expect(
+    await mutate({
       mutation: gql`
         mutation {
           changePassword(
-            username: "test@example.nl"
             currentPassword: "not my password"
             newPassword: "test1234"
-          )
+          ) {
+            newSessionId
+            error
+          }
         }
       `,
     }),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(`"This password is invalid"`)
+  ).toMatchInlineSnapshot(`
+    Object {
+      "data": Object {
+        "changePassword": Object {
+          "error": "INVALID_PASSWORD",
+          "newSessionId": null,
+        },
+      },
+      "errors": undefined,
+      "extensions": undefined,
+      "http": Object {
+        "headers": Headers {
+          Symbol(map): Object {},
+        },
+      },
+    }
+  `)
   // It doesn't change the password on an invalid current password
   expect(
     await Account.findOne({
@@ -46,38 +70,93 @@ it('throws for an invalid current password', async () => {
     }),
   ).toBeTruthy()
 })
-it('throws for an unsafe new password', async () => {
+it('requires authentication', async () => {
   await expect(
     mutate({
       mutation: gql`
         mutation {
           changePassword(
-            username: "test@example.nl"
             currentPassword: "not my password"
             newPassword: "test"
-          )
+          ) {
+            newSessionId
+            error
+          }
         }
       `,
     }),
-  ).rejects.toThrowErrorMatchingInlineSnapshot(
-    `"The new password does not meet the requirements"`,
-  )
+  ).resolves.toBeTruthy()
+  {
+    const { mutate } = createTestClient({
+      context: () => ({
+        req: httpMocks.createRequest({
+          ip: Date.now(),
+        }),
+        session: undefined,
+      }),
+    })
+    await expect(
+      mutate({
+        mutation: gql`
+          mutation {
+            changePassword(
+              currentPassword: "not my password"
+              newPassword: "test"
+            ) {
+              newSessionId
+              error
+            }
+          }
+        `,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`"Unauthenticated!"`)
+  }
+})
+it('throws for an unsafe new password', async () => {
+  expect(
+    await mutate({
+      mutation: gql`
+        mutation {
+          changePassword(currentPassword: "valid", newPassword: "test") {
+            newSessionId
+            error
+          }
+        }
+      `,
+    }),
+  ).toMatchInlineSnapshot(`
+    Object {
+      "data": Object {
+        "changePassword": Object {
+          "error": "UNSAFE_PASSWORD",
+          "newSessionId": null,
+        },
+      },
+      "errors": undefined,
+      "extensions": undefined,
+      "http": Object {
+        "headers": Headers {
+          Symbol(map): Object {},
+        },
+      },
+    }
+  `)
 })
 it('changes the password given a correct current password', async () => {
   const { data } = await mutate({
     mutation: gql`
       mutation {
-        changePassword(
-          username: "test@example.nl"
-          currentPassword: "valid"
-          newPassword: "test1234"
-        )
+        changePassword(currentPassword: "valid", newPassword: "test1234") {
+          newSessionId
+          error
+        }
       }
     `,
   })
-  expect(data?.changePassword).toBeTruthy()
-  expect(typeof data?.changePassword).toBe('string')
-  // Just to make sure the data is stored in the database
+  expect(data?.changePassword?.newSessionId).toBeTruthy()
+  expect(typeof data?.changePassword.newSessionId).toBe('string')
+  expect(data?.changePassword.error).toBeNull()
+  // It must store the new password in the database
   await account.reload()
   expect(await account.validatePassword('test1234')).toBeTruthy()
 })
@@ -85,7 +164,6 @@ it('changes the password given a correct current password', async () => {
 // his password might have leaked. Also log out the current session in case that
 // might have been intercepted.
 it('invalidates all sessions and starts a new one', async () => {
-  await createSession(account)
   const oldSessions: Session[] = await Session.findAll({
     where: {
       accountId: account.id,
@@ -98,16 +176,15 @@ it('invalidates all sessions and starts a new one', async () => {
   const { data } = await mutate({
     mutation: gql`
       mutation {
-        changePassword(
-          username: "test@example.nl"
-          currentPassword: "valid"
-          newPassword: "test1234"
-        )
+        changePassword(currentPassword: "valid", newPassword: "test1234") {
+          newSessionId
+          error
+        }
       }
     `,
   })
   // Sanity check2
-  expect(data?.changePassword).toBeTruthy()
+  expect(data?.changePassword?.newSessionId).toBeTruthy()
 
   // Validate
   const newSessions: Session[] = await Session.findAll({
