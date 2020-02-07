@@ -8,6 +8,7 @@ const authenticated = <
   Args extends object = {},
   Context extends ApolloServerContext = ApolloServerContext,
   Info extends GraphQLResolveInfo = GraphQLResolveInfo,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Response extends any = any
 >(
   next: (
