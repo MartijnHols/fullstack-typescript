@@ -4,6 +4,7 @@ const routes = {
   home: '/',
   content: '/content',
   user: '/user/:clientId',
+  register: '/register',
 }
 
 export default routes

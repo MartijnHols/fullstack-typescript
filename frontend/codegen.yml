@@ -1,0 +1,17 @@
+overwrite: true
+generates:
+  ./src/schema.ts:
+    schema: ../backend/src/modules/account/schema.graphql
+    plugins:
+      - typescript
+    config:
+      avoidOptionals: true
+      declarationKind: 'interface'
+      namingConvention:
+        typeNames: pascal-case#pascalCase
+        enumValues: constant-case#constantCase
+      scalars:
+        ID: string | number
+        SessionID: string
+        DateTime: Date
+      noSchemaStitching: true

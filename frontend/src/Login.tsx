@@ -1,12 +1,18 @@
 import styled from '@emotion/styled'
-import { Trans } from '@lingui/macro'
+import { i18n } from '@lingui/core'
+import { t, Trans } from '@lingui/macro'
 import React, { useCallback, useRef } from 'react'
 import { Form, Field } from 'react-final-form'
+import { Link } from 'react-router-dom'
 
 import Input from './components/Input'
 import Submit from './input/Submit'
 import useLogin from './mutations/useLogin'
 import PageWrapper from './PageWrapper'
+import routes from './routes'
+import { LoginError } from './schema'
+import guaranteeResult from './utils/guaranteeResult'
+import unknownFormError from './utils/unknownFormError'
 
 const StyledForm = styled.form`
   margin: 0 auto;
@@ -40,13 +46,41 @@ const Login = () => {
 
   const [login] = useLogin()
   const handleSubmit = useCallback(
-    async ({ username, password }: FormValues) => {
-      try {
-        await login({
+    async ({ username, password }: FormValues): Promise<object | void> => {
+      const {
+        data: { sessionId, error },
+      } = await guaranteeResult(
+        login({
           variables: { username, password },
-        })
-      } catch (error) {
-        console.log(error)
+        }),
+      )
+      if (error) {
+        switch (error) {
+          case LoginError.INVALID_USERNAME:
+            return {
+              username: i18n._(
+                t(
+                  'login.invalidUsername',
+                )`We have no account with this username.`,
+              ),
+            }
+          case LoginError.INVALID_PASSWORD:
+            return {
+              password: i18n._(
+                t('login.invalidPassword')`This password is incorrect.`,
+              ),
+            }
+          case LoginError.ACCOUNT_UNAVAILABLE:
+            return {
+              password: i18n._(
+                t('login.invalidPassword')`This password is incorrect.`,
+              ),
+            }
+          default:
+            return unknownFormError(error)
+        }
+      } else {
+        // set sessionId
       }
     },
     [login],
@@ -55,12 +89,13 @@ const Login = () => {
   return (
     <PageWrapper>
       <Form<FormValues> onSubmit={handleSubmit}>
-        {({ handleSubmit, submitting }) => (
+        {({ handleSubmit, submitting, submitError }) => (
           <StyledForm onSubmit={handleSubmit}>
             <Heading>
               <Trans id="login.heading">Login</Trans>
             </Heading>
-            <Field name="username">
+            {submitError && <FieldError>{submitError}</FieldError>}
+            <Field name="username" defaultValue="">
               {({ input, meta }) => (
                 <Label>
                   <Trans id="login.username">Username</Trans>:{' '}
@@ -70,13 +105,13 @@ const Login = () => {
                     autoComplete="username"
                     ref={inputRef}
                   />
-                  {meta.touched && meta.error && (
-                    <FieldError>{meta.error}</FieldError>
+                  {meta.touched && (meta.error || meta.submitError) && (
+                    <FieldError>{meta.error || meta.submitError}</FieldError>
                   )}
                 </Label>
               )}
             </Field>
-            <Field name="password">
+            <Field name="password" defaultValue="">
               {({ input, meta }) => (
                 <Label>
                   <Trans id="login.password">Password</Trans>:{' '}
@@ -85,8 +120,8 @@ const Login = () => {
                     type="password"
                     autoComplete="current-password"
                   />
-                  {meta.touched && meta.error && (
-                    <FieldError>{meta.error}</FieldError>
+                  {meta.touched && (meta.error || meta.submitError) && (
+                    <FieldError>{meta.error || meta.submitError}</FieldError>
                   )}
                 </Label>
               )}
@@ -97,6 +132,9 @@ const Login = () => {
           </StyledForm>
         )}
       </Form>
+      <Link to={routes.register}>
+        <Trans id="login.registration">Create an account</Trans>
+      </Link>
     </PageWrapper>
   )
 }
