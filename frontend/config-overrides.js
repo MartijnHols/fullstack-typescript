@@ -1,4 +1,4 @@
-const { override, addBabelPreset } = require('customize-cra')
+const { override, addBabelPreset, disableEsLint } = require('customize-cra')
 
 module.exports = override(
   addBabelPreset([
@@ -7,4 +7,7 @@ module.exports = override(
       sourceMap: process.env.NODE_ENV === 'development',
     },
   ]),
+  // No need to run ESLint in CI since we have a separate pipeline for this.
+  // This saves some runtime.
+  process.env.CI && disableEsLint(),
 )
