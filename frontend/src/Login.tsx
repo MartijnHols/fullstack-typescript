@@ -48,7 +48,9 @@ const Login = () => {
   const handleSubmit = useCallback(
     async ({ username, password }: FormValues): Promise<object | void> => {
       const {
-        data: { sessionId, error },
+        data: {
+          login: { sessionId, error },
+        },
       } = await guaranteeResult(
         login({
           variables: { username, password },
@@ -80,7 +82,8 @@ const Login = () => {
             return unknownFormError(error)
         }
       } else {
-        // set sessionId
+        // TODO: set sessionId
+        console.log(sessionId)
       }
     },
     [login],
