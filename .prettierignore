@@ -6,3 +6,4 @@
 /frontend/build/
 /frontend/node_modules/
 /frontend/src/locales/_build/
+/frontend/tsconfig.json

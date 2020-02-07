@@ -2,3 +2,8 @@
 /build/
 /node_modules/
 /src/locales/_build/
+
+# CRA fucks tsconfig formatting up on every run because it gets confused by
+# the parent's paths property, which is required solely to get WebStorm to
+# behave.
+/tsconfig.json
