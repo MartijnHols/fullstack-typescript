@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/react-hooks'
 import styled from '@emotion/styled'
 import { i18n } from '@lingui/core'
 import { t, Trans } from '@lingui/macro'
@@ -7,11 +8,10 @@ import { Link } from 'react-router-dom'
 
 import Input from './components/Input'
 import Submit from './input/Submit'
-import useLogin from './mutations/useLogin'
+import login from './mutations/login'
 import PageWrapper from './PageWrapper'
 import routes from './routes'
 import { LoginError } from './schema'
-import guaranteeResult from './utils/guaranteeResult'
 import unknownFormError from './utils/unknownFormError'
 
 const StyledForm = styled.form`
@@ -44,18 +44,14 @@ const Login = () => {
     inputRef.current.focus()
   }, [inputRef])
 
-  const [login] = useLogin()
+  const apolloClient = useApolloClient()
   const handleSubmit = useCallback(
     async ({ username, password }: FormValues): Promise<object | void> => {
       const {
         data: {
           login: { sessionId, error },
         },
-      } = await guaranteeResult(
-        login({
-          variables: { username, password },
-        }),
-      )
+      } = await login(apolloClient)(username, password)
       if (error) {
         switch (error) {
           case LoginError.INVALID_USERNAME:
@@ -86,7 +82,7 @@ const Login = () => {
         console.log(sessionId)
       }
     },
-    [login],
+    [apolloClient],
   )
 
   return (
