@@ -3,11 +3,11 @@ import styled from '@emotion/styled'
 import { i18n } from '@lingui/core'
 import { t, Trans } from '@lingui/macro'
 import { ApolloClient } from 'apollo-client'
-import React, { useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 import { Form, Field } from 'react-final-form'
 import { Link } from 'react-router-dom'
-import FieldError from './input/FieldError'
 
+import FieldError from './input/FieldError'
 import Input from './input/Input'
 import Submit from './input/Submit'
 import { compose, email, required } from './input/validators'
@@ -16,6 +16,7 @@ import PageWrapper from './PageWrapper'
 import routes from './routes'
 import { LoginError } from './schema'
 import unknownFormError from './utils/unknownFormError'
+import useAutoFocus from './utils/useAutoFocus'
 
 const StyledForm = styled.form`
   margin: 0 auto;
@@ -31,57 +32,52 @@ interface FormValues {
   password: string
 }
 
-const handleSubmit = (apolloClient: ApolloClient<{}>) => async ({
-  username,
-  password,
-}: FormValues): Promise<object | void> => {
-  const {
-    data: {
-      login: { sessionId, error },
-    },
-  } = await login(apolloClient)(username, password)
-  if (error) {
-    switch (error) {
-      case LoginError.INVALID_USERNAME:
-        return {
-          username: i18n._(
-            t('login.invalidUsername')`We have no account with this username.`,
-          ),
-        }
-      case LoginError.INVALID_PASSWORD:
-        return {
-          password: i18n._(
-            t('login.invalidPassword')`This password is incorrect.`,
-          ),
-        }
-      case LoginError.ACCOUNT_UNAVAILABLE:
-        return {
-          password: i18n._(
-            t('login.invalidPassword')`This password is incorrect.`,
-          ),
-        }
-      default:
-        return unknownFormError(error)
-    }
-  } else {
-    apolloClient.writeData({ data: { sessionId } })
-  }
-}
-
 const Login = () => {
-  const inputRef = useRef<HTMLInputElement>(null)
-  React.useEffect(() => {
-    if (!inputRef.current) {
-      return
-    }
-    inputRef.current.focus()
-  }, [inputRef])
+  const autoFocusRef = useAutoFocus()
 
   const apolloClient = useApolloClient()
+  const handleSubmit = useCallback(
+    async ({ username, password }: FormValues): Promise<object | void> => {
+      const {
+        data: {
+          login: { sessionId, error },
+        },
+      } = await login(apolloClient)(username, password)
+      if (error) {
+        switch (error) {
+          case LoginError.INVALID_USERNAME:
+            return {
+              username: i18n._(
+                t(
+                  'login.invalidUsername',
+                )`We have no account with this username.`,
+              ),
+            }
+          case LoginError.INVALID_PASSWORD:
+            return {
+              password: i18n._(
+                t('login.invalidPassword')`This password is incorrect.`,
+              ),
+            }
+          case LoginError.ACCOUNT_UNAVAILABLE:
+            return {
+              password: i18n._(
+                t('login.invalidPassword')`This password is incorrect.`,
+              ),
+            }
+          default:
+            return unknownFormError(error)
+        }
+      } else {
+        apolloClient.writeData({ data: { sessionId } })
+      }
+    },
+    [apolloClient],
+  )
 
   return (
     <PageWrapper>
-      <Form<FormValues> onSubmit={handleSubmit(apolloClient)}>
+      <Form<FormValues> onSubmit={handleSubmit}>
         {({ handleSubmit, submitting, submitError }) => (
           <StyledForm onSubmit={handleSubmit}>
             <Heading>
@@ -95,11 +91,11 @@ const Login = () => {
             >
               {({ input, meta }) => (
                 <Input
-                  label={<Trans id="login.username">Username</Trans>}
+                  label={<Trans id="login.username">Email</Trans>}
                   {...input}
                   autoComplete="username"
                   meta={meta}
-                  ref={inputRef}
+                  ref={autoFocusRef}
                 />
               )}
             </Field>
@@ -111,7 +107,6 @@ const Login = () => {
                   type="password"
                   autoComplete="current-password"
                   meta={meta}
-                  ref={inputRef}
                 />
               )}
             </Field>

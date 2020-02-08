@@ -7,7 +7,7 @@ import { RegisterError } from '../schema'
 const createAccount = async (username: string) => {
   if (!validator.isEmail(username)) {
     throw new ApolloError(
-      'This email address is already in use',
+      'The username is not a valid email address',
       RegisterError.INVALID_USERNAME,
     )
   }
@@ -18,7 +18,7 @@ const createAccount = async (username: string) => {
   })
   if (existingAccount) {
     throw new ApolloError(
-      'This username already exists',
+      'An account using this username already exists',
       RegisterError.USERNAME_ALREADY_EXISTS,
     )
   }
