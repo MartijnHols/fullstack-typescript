@@ -41,11 +41,11 @@ type RegisterResponse {
 }
 extend type Mutation {
   """
-  Register a new account.
-  Expected errors: email-already-used
-  Rate limited.
+  Create a new account. Password may be omitted to require the user to set it during activation.
+
+  *Rate limited.*
   """
-  register(username: String!): RegisterResponse!
+  register(username: String!, password: String): RegisterResponse!
     @rateLimitBurst(window: "1s", max: 1)
     @rateLimitSustained(window: "1d", max: 1000)
 }

@@ -4,7 +4,7 @@ import validator from 'validator'
 import Account from '../models/Account'
 import { RegisterError } from '../schema.generated'
 
-const createAccount = async (username: string) => {
+const createAccount = async (username: string, password?: string) => {
   if (!validator.isEmail(username)) {
     throw new ApolloError(
       'The username is not a valid email address',
@@ -25,6 +25,9 @@ const createAccount = async (username: string) => {
 
   const account = new Account()
   account.email = username
+  if (password) {
+    await account.setPassword(password)
+  }
   return account.save()
 }
 
