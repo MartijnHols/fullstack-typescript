@@ -2,7 +2,7 @@ import { ApolloError } from 'apollo-server-express'
 
 import Account from '../models/Account'
 import Session from '../models/Session'
-import { ChangePasswordError } from '../schema'
+import { ChangePasswordError } from '../schema.generated'
 import isValidPassword from '../utils/isPasswordValid'
 import createSession from './_createSession'
 

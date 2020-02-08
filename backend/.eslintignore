@@ -2,3 +2,4 @@
 /build/
 /frontend/
 /node_modules/
+**/*.generated.ts

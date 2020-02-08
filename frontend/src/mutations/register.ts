@@ -1,7 +1,7 @@
 import ApolloClient from 'apollo-client'
 import gql from 'graphql-tag'
 
-import { MutationRegisterArgs, RegisterResponse } from '../schema'
+import { MutationRegisterArgs, RegisterResponse } from '../schema.generated'
 import requireData from '../utils/requireData'
 
 const register = (apolloClient: ApolloClient<{}>) => (username: string) =>

@@ -1,4 +1,4 @@
-# Run `yarn codegen` in the backend folder when making changes to this file to update schema.ts.
+# Run `yarn codegen` in the project root when making changes to this file to update schema.generated.ts in both front- and backend.
 
 scalar DateTime
 scalar SessionID

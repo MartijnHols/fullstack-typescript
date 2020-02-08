@@ -1,7 +1,7 @@
 import ApolloClient from 'apollo-client'
 import gql from 'graphql-tag'
 
-import { LoginResponse, MutationLoginArgs } from '../schema'
+import { LoginResponse, MutationLoginArgs } from '../schema.generated'
 import requireData from '../utils/requireData'
 
 const login = (apolloClient: ApolloClient<{}>) => (

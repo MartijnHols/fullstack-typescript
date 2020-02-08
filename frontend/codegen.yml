@@ -1,6 +1,6 @@
 overwrite: true
 generates:
-  ./src/schema.ts:
+  ./src/schema.generated.ts:
     schema: ../backend/src/modules/account/schema.graphql
     plugins:
       - typescript

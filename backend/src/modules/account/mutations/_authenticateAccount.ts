@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server-express'
-import { LoginError } from '../schema'
+import { LoginError } from '../schema.generated'
 
 import Account from '../models/Account'
 

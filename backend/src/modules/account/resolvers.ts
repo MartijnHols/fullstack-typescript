@@ -15,7 +15,7 @@ import {
   RegisterResponse,
   Resolvers,
   RestorePassswordResponse,
-} from './schema'
+} from './schema.generated'
 
 const resolverMap: Partial<Resolvers<ApolloServerContext>> = {
   SessionID,

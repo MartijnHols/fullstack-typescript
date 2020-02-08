@@ -13,7 +13,7 @@
     "typescript": "^3.7.3"
   },
   "scripts": {
-    "build": "concurrently \"yarn workspace backend build\" \"yarn workspace frontend build\"",
+    "build": "concurrently -n BACKEND,FRONTEND -c magenta,green \"yarn workspace backend build\" \"yarn workspace frontend build\"",
     "lint": "yarn --silent lint:code && yarn --silent lint:rest",
     "lint:code": "yarn --silent lint:code:specific .",
     "lint:code:specific": "PRETTIER=true eslint --format stylish --ext .js,.jsx,.ts,.tsx",
@@ -23,7 +23,8 @@
     "test": "yarn workspaces run test",
     "typecheck": "yarn workspaces run typecheck",
     "precommit": "yarn typecheck && yarn lint-staged",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "codegen": "concurrently -n BACKEND,FRONTEND -c magenta,green \"yarn workspace backend codegen\" \"yarn workspace frontend codegen\""
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [

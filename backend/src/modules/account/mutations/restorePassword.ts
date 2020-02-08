@@ -1,7 +1,7 @@
 import { ApolloError } from 'apollo-server-express'
 
 import Account from '../models/Account'
-import { RestorePassswordError } from '../schema'
+import { RestorePassswordError } from '../schema.generated'
 
 const restorePassword = async (username: string) => {
   const account = await Account.findOne({

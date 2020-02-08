@@ -2,7 +2,7 @@ import { ApolloError } from 'apollo-server-express'
 import validator from 'validator'
 
 import Account from '../models/Account'
-import { RegisterError } from '../schema'
+import { RegisterError } from '../schema.generated'
 
 const createAccount = async (username: string) => {
   if (!validator.isEmail(username)) {

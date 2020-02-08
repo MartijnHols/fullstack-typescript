@@ -13,7 +13,7 @@ import { compose, email, required } from './input/validators'
 import login from './mutations/login'
 import PageWrapper from './PageWrapper'
 import routes from './routes'
-import { LoginError } from './schema'
+import { LoginError } from './schema.generated'
 import unknownFormError from './utils/unknownFormError'
 import useAutoFocus from './utils/useAutoFocus'
 

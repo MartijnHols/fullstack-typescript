@@ -2,6 +2,9 @@
 /backend/build/
 /backend/frontend/
 /backend/node_modules/
+/backend/**/*.generated.ts
+
 # Keep in sync with frontend/.eslintignore. ESLint can only use 1 .eslintignore
 /frontend/build/
 /frontend/node_modules/
+/frontend/**/*.generated.ts
