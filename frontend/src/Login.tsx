@@ -2,9 +2,11 @@ import { useApolloClient } from '@apollo/react-hooks'
 import styled from '@emotion/styled'
 import { i18n } from '@lingui/core'
 import { t, Trans } from '@lingui/macro'
+import { FieldValidator } from 'final-form'
 import React, { useCallback, useRef } from 'react'
 import { Form, Field } from 'react-final-form'
 import { Link } from 'react-router-dom'
+import validator from 'validator'
 
 import Input from './components/Input'
 import Submit from './input/Submit'
@@ -34,6 +36,24 @@ interface FormValues {
   username: string
   password: string
 }
+const email: FieldValidator<string> = value =>
+  !validator.isEmail(value)
+    ? i18n._(
+        t('generic.validationError.email')`Please enter a valid email address`,
+      )
+    : undefined
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const required: FieldValidator<any> = value =>
+  validator.isEmpty(value)
+    ? i18n._(t('generic.validationError.required')`This field is required.`)
+    : undefined
+const compose = (
+  ...validators: Array<FieldValidator<any>>
+): FieldValidator<any> => (...args: Parameters<FieldValidator<any>>) =>
+  validators.reduce<string | void>(
+    (error, validator: FieldValidator<any>) => error || validator(...args),
+    undefined,
+  )
 
 const Login = () => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -94,7 +114,11 @@ const Login = () => {
               <Trans id="login.heading">Login</Trans>
             </Heading>
             {submitError && <FieldError>{submitError}</FieldError>}
-            <Field name="username" defaultValue="">
+            <Field
+              name="username"
+              defaultValue=""
+              validate={compose(required, email)}
+            >
               {({ input, meta }) => (
                 <Label>
                   <Trans id="login.username">Username</Trans>:{' '}
@@ -110,7 +134,7 @@ const Login = () => {
                 </Label>
               )}
             </Field>
-            <Field name="password" defaultValue="">
+            <Field name="password" defaultValue="" validate={required}>
               {({ input, meta }) => (
                 <Label>
                   <Trans id="login.password">Password</Trans>:{' '}
