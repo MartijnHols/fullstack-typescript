@@ -1,11 +1,14 @@
 import { useApolloClient } from '@apollo/react-hooks'
+import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 import { i18n } from '@lingui/core'
 import { t, Trans } from '@lingui/macro'
 import React, { useCallback, useState } from 'react'
 import { Form, Field } from 'react-final-form'
 import { Link } from 'react-router-dom'
+import Icon from './components/Icon'
 
+import { ReactComponent as CheckIcon } from './icons/check-circle-regular.svg'
 import FieldError from './input/FieldError'
 import Input from './input/Input'
 import Submit from './input/Submit'
@@ -14,6 +17,7 @@ import register from './mutations/register'
 import PageWrapper from './PageWrapper'
 import routes from './routes'
 import { RegisterError } from './schema.generated'
+import * as colors from './theme/colors'
 import unknownFormError from './utils/unknownFormError'
 import useAutoFocus from './utils/useAutoFocus'
 
@@ -82,12 +86,31 @@ const Registration = () => {
   return (
     <PageWrapper>
       {isDone ? (
-        <>
-          Klaar
-          <Link to={routes.login}>
-            <Trans id="registration.done.login">Login</Trans>
-          </Link>
-        </>
+        <div
+          css={css`
+            text-align: center;
+            margin: 15px 0;
+          `}
+        >
+          <div
+            css={css`
+              margin-bottom: 15px;
+            `}
+          >
+            <Icon
+              component={CheckIcon}
+              css={css`
+                font-size: 64px;
+                color: ${colors.primary500};
+              `}
+            />
+          </div>
+          <Trans id="register.accountCreationComplete">
+            Your account has been created.
+            <br />
+            You can now <Link to={routes.login}>login</Link>.
+          </Trans>
+        </div>
       ) : (
         <>
           <Form<FormValues> onSubmit={handleSubmit}>

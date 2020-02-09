@@ -1,7 +1,9 @@
 import styled from '@emotion/styled'
 import React, { ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 
 import * as colors from './theme/colors'
+import routes from './routes'
 import Header from './Header'
 
 const Container = styled.div`
@@ -41,7 +43,7 @@ const PageWrapper = ({ children, header, footer }: Props) => (
       footer
     ) : (
       <Footer>
-        My new app. Built with <code>fullstack-typescript</code>.
+        My new app. <Link to={routes.about}>About</Link>
       </Footer>
     )}
   </Container>

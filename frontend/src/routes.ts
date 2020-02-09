@@ -6,6 +6,7 @@ const routes = {
   user: '/user/:clientId',
   login: '/login',
   register: '/register',
+  about: '/about',
 }
 
 export default routes

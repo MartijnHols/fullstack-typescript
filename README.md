@@ -21,7 +21,7 @@ TODO:
 - Account activation
 - Email
 - A proper frontend folder structure
--
+- Storybook
 
 # How to use
 
