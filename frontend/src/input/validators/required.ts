@@ -5,7 +5,7 @@ import validator from 'validator'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const required: FieldValidator<any> = value =>
-  validator.isEmpty(value)
+  value === undefined || value === null || validator.isEmpty(value)
     ? i18n._(t('generic.validationError.required')`This field is required.`)
     : undefined
 
