@@ -11,8 +11,8 @@ const register = (apolloClient: ApolloClient<{}>) => (
   requireData(
     apolloClient.mutate<{ register: RegisterResponse }, MutationRegisterArgs>({
       mutation: gql`
-        mutation($email: String!) {
-          register(email: $email) {
+        mutation($email: String!, $password: String) {
+          register(email: $email, password: $password) {
             error
           }
         }

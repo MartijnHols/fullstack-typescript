@@ -35,6 +35,7 @@ enum RegisterError {
   "The provided email is incorrectly formatted. It should be a valid email address."
   INVALID_EMAIL
   EMAIL_ALREADY_USED
+  UNSAFE_PASSWORD
 }
 type RegisterResponse {
   account: Account

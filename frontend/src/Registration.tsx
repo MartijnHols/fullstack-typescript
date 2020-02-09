@@ -28,6 +28,7 @@ const Heading = styled.h1`
 
 interface FormValues {
   email: string
+  password: string
 }
 
 const Registration = () => {
@@ -36,12 +37,12 @@ const Registration = () => {
 
   const apolloClient = useApolloClient()
   const handleSubmit = useCallback(
-    async ({ email }: FormValues): Promise<object | void> => {
+    async ({ email, password }: FormValues): Promise<object | void> => {
       const {
         data: {
           register: { error },
         },
-      } = await register(apolloClient)(email)
+      } = await register(apolloClient)(email, password)
       if (error) {
         switch (error) {
           case RegisterError.INVALID_EMAIL:
@@ -58,6 +59,14 @@ const Registration = () => {
                 t(
                   'registration.usernameAlreadyExists',
                 )`An account using this email already exists.`,
+              ),
+            }
+          case RegisterError.UNSAFE_PASSWORD:
+            return {
+              username: i18n._(
+                t(
+                  'registration.unsafePassword',
+                )`This password is not strong enough.`,
               ),
             }
           default:
@@ -95,11 +104,22 @@ const Registration = () => {
                 >
                   {({ input, meta }) => (
                     <Input
-                      label={<Trans id="login.username">Email</Trans>}
+                      label={<Trans id="registration.username">Email</Trans>}
                       {...input}
                       autoComplete="username"
                       meta={meta}
                       ref={autoFocusRef}
+                    />
+                  )}
+                </Field>
+                <Field name="password" defaultValue="" validate={required}>
+                  {({ input, meta }) => (
+                    <Input
+                      label={<Trans id="registration.password">Password</Trans>}
+                      {...input}
+                      type="password"
+                      autoComplete="new-password"
+                      meta={meta}
                     />
                   )}
                 </Field>

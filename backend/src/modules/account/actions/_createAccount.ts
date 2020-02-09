@@ -1,9 +1,11 @@
 import validator from 'validator'
+import isValidPassword from '~/modules/account/utils/isPasswordValid'
 
 import Account from '../models/Account'
 
 export class InvalidEmailError extends Error {}
 export class EmailAlreadyExistsError extends Error {}
+export class UnsafePasswordError extends Error {}
 
 const createAccount = async (email: string, password?: string) => {
   if (!validator.isEmail(email)) {
@@ -25,6 +27,11 @@ const createAccount = async (email: string, password?: string) => {
   const account = new Account()
   account.email = email
   if (password) {
+    if (!isValidPassword(password)) {
+      throw new UnsafePasswordError(
+        'The new password does not meet the requirements',
+      )
+    }
     await account.setPassword(password)
   }
   return account.save()

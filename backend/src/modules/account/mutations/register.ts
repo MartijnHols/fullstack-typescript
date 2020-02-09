@@ -4,10 +4,13 @@ import registerAction, {
 } from '../actions/register'
 import { MutationResolvers, RegisterError } from '../schema.generated'
 
-const register: MutationResolvers['register'] = async (_, { email }) => {
+const register: MutationResolvers['register'] = async (
+  _,
+  { email, password },
+) => {
   try {
     return {
-      account: await registerAction(email),
+      account: await registerAction(email, password ? password : undefined),
       error: null,
     }
   } catch (err) {

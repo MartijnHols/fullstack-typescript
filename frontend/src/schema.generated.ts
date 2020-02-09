@@ -102,7 +102,8 @@ export interface MutationRestorePasswordArgs {
 export enum RegisterError {
   /** The provided email is incorrectly formatted. It should be a valid email address. */
   INVALID_EMAIL = 'INVALID_EMAIL',
-  EMAIL_ALREADY_USED = 'EMAIL_ALREADY_USED'
+  EMAIL_ALREADY_USED = 'EMAIL_ALREADY_USED',
+  UNSAFE_PASSWORD = 'UNSAFE_PASSWORD'
 }
 
 export interface RegisterResponse {
