@@ -1,6 +1,6 @@
 {
   "extends": "../tsconfig",
-  "include": ["src", "types"],
+  "include": ["src", "../types", "types"],
   "exclude": ["**/*.test.ts"],
   "compilerOptions": {
     "module": "commonjs",
