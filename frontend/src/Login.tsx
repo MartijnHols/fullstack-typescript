@@ -61,7 +61,7 @@ const Login = () => {
           case LoginError.ACCOUNT_UNAVAILABLE:
             return {
               password: i18n._(
-                t('login.invalidPassword')`This password is incorrect.`,
+                t('login.accountUnavailable')`This account is locked.`,
               ),
             }
           default:
