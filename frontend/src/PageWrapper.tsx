@@ -1,9 +1,7 @@
 import styled from '@emotion/styled'
 import React, { ReactNode } from 'react'
-import { Link } from 'react-router-dom'
 
-import * as colors from './theme/colors'
-import routes from './routes'
+import Footer from './Footer'
 import Header from './Header'
 
 const Container = styled.div`
@@ -14,13 +12,6 @@ const Container = styled.div`
   > * {
     flex: 0 0 auto;
   }
-`
-const Footer = styled.footer`
-  background: ${colors.background};
-  color: #fff;
-  text-align: center;
-  flex-grow: 0;
-  border-top: 1px solid ${colors.grey200};
 `
 const Main = styled.main`
   flex: 1 1 auto;
@@ -39,13 +30,7 @@ const PageWrapper = ({ children, header, footer }: Props) => (
   <Container>
     {header !== undefined ? header : <Header>MartijnHols's project</Header>}
     <Main>{children}</Main>
-    {footer !== undefined ? (
-      footer
-    ) : (
-      <Footer>
-        My new app. <Link to={routes.about}>About</Link>
-      </Footer>
-    )}
+    {footer !== undefined ? footer : <Footer />}
   </Container>
 )
 
