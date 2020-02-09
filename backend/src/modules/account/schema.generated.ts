@@ -1,5 +1,7 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { default  as AccountModel } from './models/Account';
 export type Maybe<T> = T | null;
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export interface Scalars {
@@ -19,6 +21,7 @@ export interface Account {
   verified: Scalars['Boolean'],
   createdAt: Scalars['DateTime'],
   lastSeenAt: Scalars['DateTime'],
+  canLogin: Scalars['Boolean'],
 }
 
 export enum ChangePasswordError {
@@ -91,7 +94,8 @@ export interface MutationLoginArgs {
 
 
 export interface MutationRegisterArgs {
-  username: Scalars['String']
+  email: Scalars['String'],
+  password: Maybe<Scalars['String']>
 }
 
 
@@ -100,9 +104,9 @@ export interface MutationRestorePasswordArgs {
 }
 
 export enum RegisterError {
-  /** Username is incorrectly formatted. It should be a valid email address. */
-  INVALID_USERNAME = 'INVALID_USERNAME',
-  USERNAME_ALREADY_EXISTS = 'USERNAME_ALREADY_EXISTS'
+  /** The provided email is incorrectly formatted. It should be a valid email address. */
+  INVALID_EMAIL = 'INVALID_EMAIL',
+  EMAIL_ALREADY_USED = 'EMAIL_ALREADY_USED'
 }
 
 export interface RegisterResponse {
@@ -193,8 +197,8 @@ export type ResolversTypes = {
   ChangePasswordError: ChangePasswordError,
   LoginResponse: ResolverTypeWrapper<LoginResponse>,
   LoginError: LoginError,
-  RegisterResponse: ResolverTypeWrapper<RegisterResponse>,
-  Account: ResolverTypeWrapper<Account>,
+  RegisterResponse: ResolverTypeWrapper<Omit<RegisterResponse, 'account'> & { account: Maybe<ResolversTypes['Account']> }>,
+  Account: ResolverTypeWrapper<AccountModel>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>,
@@ -212,8 +216,8 @@ export type ResolversParentTypes = {
   ChangePasswordError: ChangePasswordError,
   LoginResponse: LoginResponse,
   LoginError: LoginError,
-  RegisterResponse: RegisterResponse,
-  Account: Account,
+  RegisterResponse: Omit<RegisterResponse, 'account'> & { account: Maybe<ResolversParentTypes['Account']> },
+  Account: AccountModel,
   ID: Scalars['ID'],
   Boolean: Scalars['Boolean'],
   DateTime: Scalars['DateTime'],
@@ -228,6 +232,7 @@ export type AccountResolvers<ContextType = any, ParentType extends ResolversPare
   verified: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   createdAt: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   lastSeenAt: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
+  canLogin: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 };
 
@@ -250,7 +255,7 @@ export type LoginResponseResolvers<ContextType = any, ParentType extends Resolve
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   changePassword: Resolver<ResolversTypes['ChangePasswordResponse'], ParentType, ContextType, RequireFields<MutationChangePasswordArgs, 'currentPassword' | 'newPassword'>>,
   login: Resolver<ResolversTypes['LoginResponse'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'username' | 'password'>>,
-  register: Resolver<ResolversTypes['RegisterResponse'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'username'>>,
+  register: Resolver<ResolversTypes['RegisterResponse'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email'>>,
   restorePassword: Resolver<ResolversTypes['RestorePassswordResponse'], ParentType, ContextType, RequireFields<MutationRestorePasswordArgs, 'username'>>,
 };
 

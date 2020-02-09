@@ -1,22 +1,24 @@
-import { ApolloError } from 'apollo-server-express'
+import restorePasswordAction, {
+  InvalidUsernameError,
+} from '../actions/restorePassword'
+import { MutationResolvers, RestorePassswordError } from '../schema.generated'
 
-import Account from '../models/Account'
-import { RestorePassswordError } from '../schema.generated'
-
-const restorePassword = async (username: string) => {
-  const account = await Account.findOne({
-    where: {
-      email: username,
-    },
-  })
-  if (!account) {
-    throw new ApolloError(
-      'There is no account with this username',
-      RestorePassswordError.INVALID_USERNAME,
-    )
+const restorePassword: MutationResolvers['restorePassword'] = async (
+  _,
+  { username },
+) => {
+  try {
+    await restorePasswordAction(username)
+    return {
+      error: null,
+    }
+  } catch (err) {
+    if (err instanceof InvalidUsernameError) {
+      return { error: RestorePassswordError.INVALID_USERNAME }
+    } else {
+      throw err
+    }
   }
-
-  // TODO: Send email
 }
 
 export default restorePassword

@@ -8,6 +8,7 @@ type Account {
   verified: Boolean!
   createdAt: DateTime!
   lastSeenAt: DateTime!
+  canLogin: Boolean!
 }
 
 enum LoginError {
@@ -31,9 +32,9 @@ extend type Mutation {
 }
 
 enum RegisterError {
-  "Username is incorrectly formatted. It should be a valid email address."
-  INVALID_USERNAME
-  USERNAME_ALREADY_EXISTS
+  "The provided email is incorrectly formatted. It should be a valid email address."
+  INVALID_EMAIL
+  EMAIL_ALREADY_USED
 }
 type RegisterResponse {
   account: Account
@@ -45,7 +46,7 @@ extend type Mutation {
 
   *Rate limited.*
   """
-  register(username: String!, password: String): RegisterResponse!
+  register(email: String!, password: String): RegisterResponse!
     @rateLimitBurst(window: "1s", max: 1)
     @rateLimitSustained(window: "1d", max: 1000)
 }

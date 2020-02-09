@@ -22,11 +22,11 @@ beforeEach(async () => {
   const testClient = createTestClient()
   mutate = testClient.mutate
 })
-it('returns an error for an invalid username', async () => {
+it('returns an error for an invalid email', async () => {
   const { data } = await mutate({
     mutation: gql`
       mutation {
-        register(username: "test@example") {
+        register(email: "test@example") {
           account {
             id
             email
@@ -43,16 +43,16 @@ it('returns an error for an invalid username', async () => {
     Object {
       "register": Object {
         "account": null,
-        "error": "INVALID_USERNAME",
+        "error": "INVALID_EMAIL",
       },
     }
   `)
 })
-it('returns an error for an already existing username', async () => {
+it('returns an error for an already existing email', async () => {
   const { data } = await mutate({
     mutation: gql`
         mutation {
-            register(username: "${EXISTING_ACCOUNT_EMAIL}") {
+            register(email: "${EXISTING_ACCOUNT_EMAIL}") {
                 account {
                     id
                     email
@@ -69,17 +69,17 @@ it('returns an error for an already existing username', async () => {
     Object {
       "register": Object {
         "account": null,
-        "error": "USERNAME_ALREADY_EXISTS",
+        "error": "EMAIL_ALREADY_USED",
       },
     }
   `)
 })
 
-it('succeeds given a proper new username', async () => {
+it('succeeds given a proper new email', async () => {
   const { data } = await mutate({
     mutation: gql`
         mutation {
-            register(username: "${NEW_ACCOUNT_EMAIL}") {
+            register(email: "${NEW_ACCOUNT_EMAIL}") {
                 account {
                     id
                     email
@@ -102,3 +102,5 @@ it('succeeds given a proper new username', async () => {
   expect(account.createdAt).toBeAJSONDateTime()
   expect(account.lastSeenAt).toBeAJSONDateTime()
 })
+
+// TODO: test with password

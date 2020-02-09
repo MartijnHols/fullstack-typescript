@@ -24,13 +24,29 @@ Grouping by file type makes it very easy to organize your code. This comes with 
 
 The modular structure makes it easier to develop a new feature or extend an existing one as all irrelevant pieces are elsewhere. A module can be small. Some modules might have no more than 5 mutations, while the entire application could easily grow to have more than 50 mutations.
 
+## Definitions
+
+- **Actions**: these are generic actions that have no knowledge of our usage of Apollo. These can be reused should we decide to switch communication protocols, or add another one. Actions prefixed with an underscore (`_`) are internal actions and to be considered private to other actions. These return generic data and throw generic errors to be translated by the Apollo-specific mutations.
+- **Mutations**: Apollo-specific mutations.
+- **Queries**: Apollo-specific queries.
+
 # Testing
 
 Make integration tests on each mutation and query via Apollo. Do not test the mutation/query functions directly. They should be treated as irrelevant implementation details.
 
 This does make the projected locked-in on GraphQL (and to a lesser extend apollo-server). This is a necessary sacrifice as type issues in the schema are a common cause for bugs.
 
-It could be considered to test both the mutation/query functions and the Apollo-Server. Usually the duplicated tests would not be worth it as both would need to test the exact same things. It is more important to test the GraphQL calls as more issues can be prevented in doing so, and keeping duplicate code in sync is hard and a waste of effort.
+It could be considered to test both the actions and the Apollo-Server. Usually the duplicated tests would not be worth it as both would need to test the exact same things. It is more important to test the GraphQL calls as more issues can be prevented in doing so, and keeping duplicate code in sync is hard and a waste of effort.
+
+## Test locations
+
+Co-locate unit tests with the function under test by giving it the same name but with the `.test.ts(x)` suffix.
+
+Place Apollo integration tests in the `tests` folder of a module. These tests run on the Apollo server and not a specific function. Every resolver must have a test.
+
+## Test naming
+
+Write tests like requirements. Tests "must" instead of "should". Don't write the "must" keyword, it's unnecessary bloat. Write "_it_ invalidates all sessions and starts a new one" rather than "_it_ must invalidate all sessions and starts a new one".
 
 ## Run in band / database testing
 

@@ -1,45 +1,41 @@
-import { ApolloError } from 'apollo-server-express'
+import authenticated from '~/utils/authenticated'
 
-import Account from '../models/Account'
-import Session from '../models/Session'
-import { ChangePasswordError } from '../schema.generated'
-import isValidPassword from '../utils/isPasswordValid'
-import createSession from './_createSession'
+import changePasswordAction, {
+  AccountUnavailableError,
+  InvalidPasswordError,
+  UnsafePasswordError,
+} from '../actions/changePassword'
+import { ChangePasswordError, MutationResolvers } from '../schema.generated'
 
-const changePassword = async (
-  account: Account,
-  currentPassword: string,
-  newPassword: string,
-) => {
-  if (!account.hasPassword) {
-    throw new ApolloError(
-      'This account has no password. Changing password for this account is not possible at this time.',
-      ChangePasswordError.UNAVAILABLE,
-    )
-  }
-  if (!(await account.validatePassword(currentPassword))) {
-    throw new ApolloError(
-      'This password is invalid',
-      ChangePasswordError.INVALID_PASSWORD,
-    )
-  }
-  if (!isValidPassword(newPassword)) {
-    throw new ApolloError(
-      'The new password does not meet the requirements',
-      ChangePasswordError.UNSAFE_PASSWORD,
-    )
-  }
-  await account.setPassword(newPassword)
-  await Promise.all([
-    account.save(),
-    Session.destroy({
-      where: {
-        accountId: account.id,
-      },
-    }),
-  ])
-  const newSession = await createSession(account)
-  return newSession.uniqueId
-}
+const changePassword: MutationResolvers['changePassword'] = authenticated(
+  async (_, { currentPassword, newPassword }, { session }) => {
+    try {
+      return {
+        newSessionId: await changePasswordAction(
+          await session.$get('account'),
+          currentPassword,
+          newPassword,
+        ),
+        error: null,
+      }
+    } catch (err) {
+      if (err instanceof AccountUnavailableError) {
+        return { newSessionId: null, error: ChangePasswordError.UNAVAILABLE }
+      } else if (err instanceof InvalidPasswordError) {
+        return {
+          newSessionId: null,
+          error: ChangePasswordError.INVALID_PASSWORD,
+        }
+      } else if (err instanceof UnsafePasswordError) {
+        return {
+          newSessionId: null,
+          error: ChangePasswordError.UNSAFE_PASSWORD,
+        }
+      } else {
+        throw err
+      }
+    }
+  },
+)
 
 export default changePassword

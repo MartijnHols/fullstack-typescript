@@ -4,7 +4,11 @@ generates:
     schema: ./src/modules/account/schema.graphql
     plugins:
       - typescript
-      - typescript-resolvers
+      - typescript-resolvers:
+          # We NEED to put two spaces in front of `as` to workaround a bug with
+          # default imports. See https://github.com/dotansimha/graphql-code-generator/issues/3466
+          mappers:
+            Account: ./models/Account#default  as AccountModel
     config:
       avoidOptionals: true
       declarationKind: 'interface'

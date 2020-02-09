@@ -5,7 +5,6 @@ generates:
     plugins:
       - typescript
     config:
-      avoidOptionals: true
       declarationKind: 'interface'
       namingConvention:
         typeNames: pascal-case#pascalCase

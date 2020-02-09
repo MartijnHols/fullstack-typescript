@@ -17,6 +17,7 @@ export interface Account {
   verified: Scalars['Boolean'],
   createdAt: Scalars['DateTime'],
   lastSeenAt: Scalars['DateTime'],
+  canLogin: Scalars['Boolean'],
 }
 
 export enum ChangePasswordError {
@@ -27,8 +28,8 @@ export enum ChangePasswordError {
 
 export interface ChangePasswordResponse {
    __typename?: 'ChangePasswordResponse',
-  newSessionId: Maybe<Scalars['SessionID']>,
-  error: Maybe<ChangePasswordError>,
+  newSessionId?: Maybe<Scalars['SessionID']>,
+  error?: Maybe<ChangePasswordError>,
 }
 
 
@@ -40,8 +41,8 @@ export enum LoginError {
 
 export interface LoginResponse {
    __typename?: 'LoginResponse',
-  sessionId: Maybe<Scalars['SessionID']>,
-  error: Maybe<LoginError>,
+  sessionId?: Maybe<Scalars['SessionID']>,
+  error?: Maybe<LoginError>,
 }
 
 export interface Mutation {
@@ -89,7 +90,8 @@ export interface MutationLoginArgs {
 
 
 export interface MutationRegisterArgs {
-  username: Scalars['String']
+  email: Scalars['String'],
+  password?: Maybe<Scalars['String']>
 }
 
 
@@ -98,15 +100,15 @@ export interface MutationRestorePasswordArgs {
 }
 
 export enum RegisterError {
-  /** Username is incorrectly formatted. It should be a valid email address. */
-  INVALID_USERNAME = 'INVALID_USERNAME',
-  USERNAME_ALREADY_EXISTS = 'USERNAME_ALREADY_EXISTS'
+  /** The provided email is incorrectly formatted. It should be a valid email address. */
+  INVALID_EMAIL = 'INVALID_EMAIL',
+  EMAIL_ALREADY_USED = 'EMAIL_ALREADY_USED'
 }
 
 export interface RegisterResponse {
    __typename?: 'RegisterResponse',
-  account: Maybe<Account>,
-  error: Maybe<RegisterError>,
+  account?: Maybe<Account>,
+  error?: Maybe<RegisterError>,
 }
 
 export enum RestorePassswordError {
@@ -115,6 +117,6 @@ export enum RestorePassswordError {
 
 export interface RestorePassswordResponse {
    __typename?: 'RestorePassswordResponse',
-  error: Maybe<RestorePassswordError>,
+  error?: Maybe<RestorePassswordError>,
 }
 

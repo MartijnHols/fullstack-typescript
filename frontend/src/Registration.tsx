@@ -27,7 +27,7 @@ const Heading = styled.h1`
 `
 
 interface FormValues {
-  username: string
+  email: string
 }
 
 const Registration = () => {
@@ -36,28 +36,28 @@ const Registration = () => {
 
   const apolloClient = useApolloClient()
   const handleSubmit = useCallback(
-    async ({ username }: FormValues): Promise<object | void> => {
+    async ({ email }: FormValues): Promise<object | void> => {
       const {
         data: {
           register: { error },
         },
-      } = await register(apolloClient)(username)
+      } = await register(apolloClient)(email)
       if (error) {
         switch (error) {
-          case RegisterError.INVALID_USERNAME:
+          case RegisterError.INVALID_EMAIL:
             return {
               username: i18n._(
                 t(
                   'registration.invalidUsername',
-                )`Your username needs to be a valid email address.`,
+                )`This doesn't appear to be a valid email address.`,
               ),
             }
-          case RegisterError.USERNAME_ALREADY_EXISTS:
+          case RegisterError.EMAIL_ALREADY_USED:
             return {
               username: i18n._(
                 t(
                   'registration.usernameAlreadyExists',
-                )`An account using this username already exists.`,
+                )`An account using this email already exists.`,
               ),
             }
           default:
@@ -89,7 +89,7 @@ const Registration = () => {
                 </Heading>
                 {submitError && <FieldError>{submitError}</FieldError>}
                 <Field
-                  name="username"
+                  name="email"
                   defaultValue=""
                   validate={compose(required, email)}
                 >
