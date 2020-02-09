@@ -12,6 +12,7 @@ import I18nProvider from './I18nProvider'
 import { Language } from './locales'
 import Router from './Router'
 import * as colors from './theme/colors'
+import useLanguage from './utils/useLanguage'
 
 const Container = styled.div`
   color: ${colors.onBackground};
@@ -19,15 +20,13 @@ const Container = styled.div`
 `
 
 const App = () => {
-  const isEnglish =
-    window.location.pathname === '/en' ||
-    window.location.pathname.startsWith('/en/')
+  const [language] = useLanguage()
 
   return (
     <Container>
-      <I18nProvider language={isEnglish ? Language.English : Language.Dutch}>
+      <I18nProvider language={language}>
         <ApolloProvider client={createApolloClient()}>
-          <BrowserRouter basename={isEnglish ? '/en' : ''}>
+          <BrowserRouter basename={language === Language.English ? '/en' : ''}>
             <Router />
           </BrowserRouter>
         </ApolloProvider>

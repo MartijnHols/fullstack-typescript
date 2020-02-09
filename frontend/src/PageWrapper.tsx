@@ -25,7 +25,6 @@ interface Props {
   footer?: ReactNode | null
 }
 
-// TODO: Replace language selection with cookie
 const PageWrapper = ({ children, header, footer }: Props) => (
   <Container>
     {header !== undefined ? header : <Header>MartijnHols's project</Header>}
