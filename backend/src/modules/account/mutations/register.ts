@@ -1,3 +1,4 @@
+import { UnsafePasswordError } from '~/modules/account/actions/_createAccount'
 import registerAction, {
   EmailAlreadyExistsError,
   InvalidEmailError,
@@ -18,6 +19,8 @@ const register: MutationResolvers['register'] = async (
       return { account: null, error: RegisterError.INVALID_EMAIL }
     } else if (err instanceof EmailAlreadyExistsError) {
       return { account: null, error: RegisterError.EMAIL_ALREADY_USED }
+    } else if (err instanceof UnsafePasswordError) {
+      return { account: null, error: RegisterError.UNSAFE_PASSWORD }
     } else {
       throw err
     }
