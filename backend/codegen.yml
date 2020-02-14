@@ -1,7 +1,9 @@
 overwrite: true
 generates:
   ./src/modules/account/schema.generated.ts:
-    schema: ./src/modules/account/schema.graphql
+    schema:
+      - ./src/scalars.graphql
+      - ./src/modules/account/schema.graphql
     plugins:
       - typescript
       - typescript-resolvers:
@@ -9,6 +11,24 @@ generates:
           # default imports. See https://github.com/dotansimha/graphql-code-generator/issues/3466
           mappers:
             Account: ./models/Account#default  as AccountModel
+    config:
+      avoidOptionals: true
+      declarationKind: 'interface'
+      namingConvention:
+        typeNames: pascal-case#pascalCase
+        enumValues: constant-case#constantCase
+      scalars:
+        ID: string | number
+        SessionID: string
+        DateTime: Date
+      noSchemaStitching: true
+  ./src/modules/chat/schema.generated.ts:
+    schema:
+      - ./src/scalars.graphql
+      - ./src/modules/chat/schema.graphql
+    plugins:
+      - typescript
+      - typescript-resolvers
     config:
       avoidOptionals: true
       declarationKind: 'interface'

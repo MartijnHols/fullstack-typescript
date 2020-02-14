@@ -1,5 +1,3 @@
-scalar DateTime
-
 # Types may not be empty: https://github.com/apollographql/graphql-tools/issues/648
 # They're extended in the modules.
 type Query {

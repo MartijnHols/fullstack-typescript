@@ -21,6 +21,7 @@ import {
 
 // The standard TS compiler can't be configured to import graphql files :(
 const schema = fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8')
+const scalars = fs.readFileSync(path.join(__dirname, 'scalars.graphql'), 'utf8')
 
 export const globalResolvers = {
   DateTime: DateTimeResolver,
@@ -66,6 +67,7 @@ const createApolloServer = ({
     typeDefs: [
       rateLimitTypeDefs,
       schema,
+      scalars,
       accountSchema,
       ...(Array.isArray(typeDefs) ? typeDefs : [typeDefs]),
     ] as DocumentNode | DocumentNode[] | string | string[],

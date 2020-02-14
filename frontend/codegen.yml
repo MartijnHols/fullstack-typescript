@@ -1,7 +1,9 @@
 overwrite: true
 generates:
   ./src/schema.generated.ts:
-    schema: ../backend/src/modules/account/schema.graphql
+    schema:
+      - ../backend/src/scalars.graphql
+      - ../backend/src/modules/account/schema.graphql
     plugins:
       - typescript
     config:
