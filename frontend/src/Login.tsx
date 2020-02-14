@@ -4,7 +4,7 @@ import { i18n } from '@lingui/core'
 import { t, Trans } from '@lingui/macro'
 import React, { useCallback } from 'react'
 import { Form, Field } from 'react-final-form'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 import FieldError from './input/FieldError'
 import Input from './input/Input'
@@ -33,6 +33,7 @@ interface FormValues {
 
 const Login = () => {
   const autoFocusRef = useAutoFocus()
+  const { push } = useHistory()
 
   const apolloClient = useApolloClient()
   const handleSubmit = useCallback(
@@ -69,9 +70,10 @@ const Login = () => {
         }
       } else {
         apolloClient.writeData({ data: { sessionId } })
+        push(routes.textChat)
       }
     },
-    [apolloClient],
+    [apolloClient, push],
   )
 
   return (
