@@ -16,7 +16,6 @@ const resolverMap: Overwrite<
   }
 > = {
   SessionID,
-  DateTime: DateTimeResolver,
   Mutation: {
     register,
     login,

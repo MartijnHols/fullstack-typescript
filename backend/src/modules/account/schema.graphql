@@ -1,6 +1,5 @@
 # Run `yarn codegen` in the project root when making changes to this file to update schema.generated.ts in both front- and backend.
 
-scalar DateTime
 scalar SessionID
 type Account {
   id: ID!

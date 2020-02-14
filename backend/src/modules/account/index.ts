@@ -4,6 +4,7 @@ import path from 'path'
 import Account from './models/Account'
 import Session from './models/Session'
 
+export { Account, Session }
 export const models = [Account, Session]
 
 export { default as resolvers } from './resolvers'

@@ -3,10 +3,7 @@ import pinoLogger from 'express-pino-logger'
 import http from 'http'
 
 import './config/env'
-import createApolloServer, {
-  pubsub,
-  SOMETHING_CHANGED_TOPIC,
-} from './createApolloServer'
+import createApolloServer from './createApolloServer'
 
 // Initialize the connection right away so we can use models directly
 import './sequelize'
@@ -80,10 +77,5 @@ async function main() {
 
   console.log(`🚀 Server ready at ${url}`)
   console.log(`🚀 Subscriptions ready at ${subscriptionsUrl}`)
-
-  // For testing (PoC)
-  setInterval(() => {
-    pubsub.publish(SOMETHING_CHANGED_TOPIC, { somethingChanged: { id: '123' } })
-  }, 1000)
 }
 main()

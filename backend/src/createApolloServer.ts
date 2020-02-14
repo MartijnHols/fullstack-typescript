@@ -11,26 +11,19 @@ import express from 'express'
 import { DocumentNode } from 'graphql'
 import depthLimit from 'graphql-depth-limit'
 import { createRateLimitDirective } from 'graphql-rate-limit'
-import { PubSub } from 'graphql-subscriptions'
-
-import Session from '~/modules/account/models/Session'
+import { DateTimeResolver } from 'graphql-scalars'
 
 import {
   resolvers as accountResolvers,
   schema as accountSchema,
-} from './modules/account'
+  Session,
+} from '~/modules/account'
+
 // The standard TS compiler can't be configured to import graphql files :(
 const schema = fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8')
 
-export const pubsub = new PubSub()
-
-export const SOMETHING_CHANGED_TOPIC = 'something_changed'
-export const tempResolvers = {
-  Subscription: {
-    somethingChanged: {
-      subscribe: () => pubsub.asyncIterator(SOMETHING_CHANGED_TOPIC),
-    },
-  },
+export const globalResolvers = {
+  DateTime: DateTimeResolver,
 }
 
 export const rateLimitTypeDefs = gql`
@@ -77,7 +70,7 @@ const createApolloServer = ({
       ...(Array.isArray(typeDefs) ? typeDefs : [typeDefs]),
     ] as DocumentNode | DocumentNode[] | string | string[],
     resolvers: [
-      tempResolvers,
+      globalResolvers,
       accountResolvers as IResolvers,
       ...(Array.isArray(resolvers) ? resolvers : [resolvers]),
     ],
@@ -91,7 +84,10 @@ const createApolloServer = ({
       },
     },
     validationRules: [depthLimit(10)],
-    context: async ({ req }): Promise<ApolloServerContext> => {
+    context: async ({ connection, req }): Promise<ApolloServerContext> => {
+      if (connection) {
+        return connection.context
+      }
       const sessionId = req.headers[HEADER_NAME]
       let session: Session | undefined = undefined
       if (sessionId) {
