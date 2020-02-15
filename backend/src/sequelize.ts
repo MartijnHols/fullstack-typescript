@@ -1,12 +1,20 @@
 import { Dialect } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
-import { dialect, host, username, password, database } from './config/sequelize'
+import {
+  dialect,
+  host,
+  port,
+  username,
+  password,
+  database,
+} from './config/sequelize'
 import models from './models'
 
 function connect() {
   return new Sequelize(database, username, password, {
     host,
+    port,
     dialect: dialect as Dialect,
     dialectOptions: {
       timezone: 'Etc/UTC',

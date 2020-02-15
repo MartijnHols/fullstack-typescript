@@ -8,6 +8,7 @@ function env(name: string) {
 
 export const dialect = env('DATABASE_DIALECT')
 export const host = env('DATABASE_HOST')
+export const port = Number(env('DATABASE_PORT'))
 export const username = env('DATABASE_USERNAME')
 export const password = env('DATABASE_PASSWORD')
 export const database = env('DATABASE_DB_NAME')
