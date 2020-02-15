@@ -49,7 +49,15 @@ export const rateLimitTypeDefs = gql`
 `
 type GraphQLRateLimitConfig = Parameters<typeof createRateLimitDirective>[0]
 const config: GraphQLRateLimitConfig = {
-  identifyContext: ctx => ctx.req.ip,
+  identifyContext: ctx => {
+    if (ctx.req) {
+      return ctx.req.ip
+    }
+    if (ctx.session) {
+      return ctx.session.uniqueId
+    }
+    throw new Error('Unidentifiable user')
+  },
 }
 const rateLimitBurstDirective = createRateLimitDirective(config)
 // Big enough not to cap locations with a lot of users, but not too big to avoid damage

@@ -26,13 +26,20 @@ const Chat = () => {
   const [sendMessage] = useMutation<
     { error: null },
     { to: string; text: string }
-  >(gql`
-    mutation($to: String!, $text: String!) {
-      sendMessage(to: $to, text: $text) {
-        error
+  >(
+    gql`
+      mutation($to: String!, $text: String!) {
+        sendMessage(to: $to, text: $text) {
+          error
+        }
       }
-    }
-  `)
+    `,
+    {
+      context: {
+        useWebSocket: true,
+      },
+    },
+  )
 
   useEffect(() => {
     apolloClient

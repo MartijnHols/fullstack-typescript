@@ -33,11 +33,19 @@ const wsLink = new WebSocketLink({
 })
 const link = split(
   // split based on operation type
-  ({ query }) => {
+  ({ query, getContext }) => {
     const { kind, operation } = getMainDefinition(
       query,
     ) as OperationDefinitionNode
-    return kind === 'OperationDefinition' && operation === 'subscription'
+    if (kind === 'OperationDefinition' && operation === 'subscription') {
+      return true
+    }
+    const context = getContext()
+    if (context.useWebSocket) {
+      return true
+    }
+
+    return false
   },
   wsLink,
   authLink.concat(httpLink),
