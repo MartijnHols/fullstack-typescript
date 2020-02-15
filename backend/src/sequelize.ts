@@ -8,6 +8,7 @@ import {
   username,
   password,
   database,
+  logging,
 } from './config/sequelize'
 import models from './models'
 
@@ -29,10 +30,7 @@ function connect() {
       updatedAt: false,
       deletedAt: false,
     },
-    logging:
-      process.env.DATABASE_VERBOSE === 'true'
-        ? sql => console.log(`🗄️${sql}`)
-        : false,
+    logging: logging ? sql => console.log(`🗄️${sql}`) : false,
     models,
   })
 }

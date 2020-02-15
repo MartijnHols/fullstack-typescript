@@ -15,3 +15,4 @@ export const database = env('DATABASE_DB_NAME')
 export const dialectOptions = {
   timezone: dialect === 'mariadb' ? 'Etc/UTC' : undefined,
 }
+export const logging = process.env.DATABASE_VERBOSE === 'true'
