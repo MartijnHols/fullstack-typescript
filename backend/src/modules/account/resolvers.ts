@@ -1,5 +1,3 @@
-import { DateTimeResolver } from 'graphql-scalars'
-
 import { ApolloServerContext } from '~/createApolloServer'
 
 import register from './mutations/register'

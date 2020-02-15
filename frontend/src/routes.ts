@@ -7,7 +7,7 @@ const routes = {
   login: '/login',
   register: '/register',
   about: '/about',
-  textChat: '/text-chat',
+  chat: '/chat',
 }
 
 export default routes

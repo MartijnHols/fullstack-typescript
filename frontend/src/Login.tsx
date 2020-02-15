@@ -73,6 +73,7 @@ const Login = () => {
         throw new Error('No session ID received')
       } else {
         setSessionId(sessionId)
+        push(routes.chat)
       }
     },
     [apolloClient, push],

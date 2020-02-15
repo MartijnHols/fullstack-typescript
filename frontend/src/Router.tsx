@@ -6,7 +6,7 @@ import About from './About'
 import Content from './Content'
 import Login from './Login'
 import Registration from './Registration'
-import TextChat from './TextChat'
+import Chat from './Chat'
 
 const Router = () => {
   return (
@@ -26,8 +26,8 @@ const Router = () => {
       <Route path={routes.about} exact>
         <About />
       </Route>
-      <Route path={routes.textChat} exact>
-        <TextChat />
+      <Route path={routes.chat} exact>
+        <Chat />
       </Route>
       {/*<Route*/}
       {/*  path={routes.user}*/}

@@ -45,6 +45,19 @@ export interface LoginResponse {
   error?: Maybe<LoginError>,
 }
 
+export interface Message {
+   __typename?: 'Message',
+  id: Scalars['ID'],
+  /** 
+ * I know making this `channel` and having separate tables with users will allow
+   * us to make multi-user chats, but that's beyond the scope of this subscriptions example
+ */
+  author: Scalars['String'],
+  to: Scalars['String'],
+  text: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+}
+
 export interface Mutation {
    __typename?: 'Mutation',
   /** 
@@ -74,6 +87,12 @@ export interface Mutation {
    * *Rate limited.*
  */
   restorePassword: RestorePassswordResponse,
+  /** 
+ * Send a message to the provided person.
+   * 
+   * *Rate limited.*
+ */
+  sendMessage: SendMessageResponse,
 }
 
 
@@ -99,6 +118,12 @@ export interface MutationRestorePasswordArgs {
   username: Scalars['String']
 }
 
+
+export interface MutationSendMessageArgs {
+  to: Scalars['String'],
+  text: Scalars['String']
+}
+
 export enum RegisterError {
   /** The provided email is incorrectly formatted. It should be a valid email address. */
   INVALID_EMAIL = 'INVALID_EMAIL',
@@ -121,3 +146,18 @@ export interface RestorePassswordResponse {
   error?: Maybe<RestorePassswordError>,
 }
 
+export enum SendMessageError {
+  /** Currently only has fatal errors */
+  UNDEFINED = '_UNDEFINED_'
+}
+
+export interface SendMessageResponse {
+   __typename?: 'SendMessageResponse',
+  error?: Maybe<SendMessageError>,
+}
+
+
+export interface Subscription {
+   __typename?: 'Subscription',
+  message: Message,
+}

@@ -18,6 +18,10 @@ import {
   schema as accountSchema,
   Session,
 } from '~/modules/account'
+import {
+  resolvers as chatResolvers,
+  schema as chatSchema,
+} from '~/modules/chat'
 
 // The standard TS compiler can't be configured to import graphql files :(
 const schema = fs.readFileSync(path.join(__dirname, 'schema.graphql'), 'utf8')
@@ -69,11 +73,13 @@ const createApolloServer = ({
       schema,
       scalars,
       accountSchema,
+      chatSchema,
       ...(Array.isArray(typeDefs) ? typeDefs : [typeDefs]),
     ] as DocumentNode | DocumentNode[] | string | string[],
     resolvers: [
       globalResolvers,
       accountResolvers as IResolvers,
+      chatResolvers as IResolvers,
       ...(Array.isArray(resolvers) ? resolvers : [resolvers]),
     ],
     schemaDirectives: {

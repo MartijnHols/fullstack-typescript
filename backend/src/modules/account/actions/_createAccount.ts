@@ -1,7 +1,7 @@
 import validator from 'validator'
-import isValidPassword from '~/modules/account/utils/isPasswordValid'
 
 import Account from '../models/Account'
+import isValidPassword from '../utils/isPasswordValid'
 
 export class InvalidEmailError extends Error {}
 export class EmailAlreadyExistsError extends Error {}

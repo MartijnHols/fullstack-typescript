@@ -4,6 +4,7 @@ generates:
     schema:
       - ../backend/src/scalars.graphql
       - ../backend/src/modules/account/schema.graphql
+      - ../backend/src/modules/chat/schema.graphql
     plugins:
       - typescript
     config:

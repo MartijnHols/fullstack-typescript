@@ -1,0 +1,31 @@
+# Run `yarn codegen` in the project root when making changes to this file to update schema.generated.ts in both front- and backend.
+
+type Message {
+  id: ID!
+  # I know making this `channel` and having separate tables with users will allow us to make multi-user chats, but that's beyond the scope of this subscriptions example
+  author: String! # TODO: Make a type
+  to: String! # TODO: Make a type
+  text: String!
+  createdAt: DateTime!
+}
+
+enum SendMessageError {
+  # Currently only has fatal errors
+  _UNDEFINED_
+}
+type SendMessageResponse {
+  error: SendMessageError
+}
+extend type Mutation {
+  """
+  Send a message to the provided person.
+
+  *Rate limited.*
+  """
+  sendMessage(to: String!, text: String!): SendMessageResponse!
+    @rateLimitBurst(window: "1s", max: 2)
+    @rateLimitSustained(window: "1d", max: 10000)
+}
+extend type Subscription {
+  message: Message!
+}

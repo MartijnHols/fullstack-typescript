@@ -1,4 +1,4 @@
-import { UnsafePasswordError } from '~/modules/account/actions/_createAccount'
+import { UnsafePasswordError } from '../actions/_createAccount'
 import registerAction, {
   EmailAlreadyExistsError,
   InvalidEmailError,
