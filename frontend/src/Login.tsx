@@ -14,6 +14,7 @@ import login from './mutations/login'
 import PageWrapper from './PageWrapper'
 import routes from './routes'
 import { LoginError } from './schema.generated'
+import { setSessionId } from './sessionId'
 import unknownFormError from './utils/unknownFormError'
 import useAutoFocus from './utils/useAutoFocus'
 
@@ -68,9 +69,10 @@ const Login = () => {
           default:
             return unknownFormError(error)
         }
+      } else if (!sessionId) {
+        throw new Error('No session ID received')
       } else {
-        apolloClient.writeData({ data: { sessionId } })
-        push(routes.textChat)
+        setSessionId(sessionId)
       }
     },
     [apolloClient, push],

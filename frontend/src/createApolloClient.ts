@@ -1,4 +1,5 @@
 import { split } from 'apollo-link'
+import { setContext } from 'apollo-link-context'
 import { HttpLink } from 'apollo-link-http'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import ApolloClient from 'apollo-client'
@@ -7,6 +8,7 @@ import { getMainDefinition } from 'apollo-utilities'
 import { OperationDefinitionNode } from 'graphql'
 
 import resolvers from './resolvers'
+import { getSessionId } from './sessionId'
 
 const GRAPHQL_ENDPOINT = 'http://localhost:4000/graphql'
 const GRAPHQL_WEB_SOCKET_ENDPOINT = 'ws://localhost:4000/graphql'
@@ -14,10 +16,19 @@ const GRAPHQL_WEB_SOCKET_ENDPOINT = 'ws://localhost:4000/graphql'
 const httpLink = new HttpLink({
   uri: GRAPHQL_ENDPOINT,
 })
+const authLink = setContext((_, { headers }) => ({
+  headers: {
+    ...headers,
+    sessionId: getSessionId() || undefined,
+  },
+}))
 const wsLink = new WebSocketLink({
   uri: GRAPHQL_WEB_SOCKET_ENDPOINT,
   options: {
     reconnect: true,
+    connectionParams: () => ({
+      sessionId: getSessionId() || undefined,
+    }),
   },
 })
 const link = split(
@@ -29,7 +40,7 @@ const link = split(
     return kind === 'OperationDefinition' && operation === 'subscription'
   },
   wsLink,
-  httpLink,
+  authLink.concat(httpLink),
 )
 
 const createApolloClient = () =>

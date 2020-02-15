@@ -9,7 +9,10 @@ const login = (apolloClient: ApolloClient<{}>) => (
   password: string,
 ) =>
   requireData(
-    apolloClient.mutate<{ login: LoginResponse }, MutationLoginArgs>({
+    apolloClient.mutate<
+      { login: Pick<LoginResponse, 'sessionId' | 'error'> },
+      MutationLoginArgs
+    >({
       mutation: gql`
         mutation($username: String!, $password: String!) {
           login(username: $username, password: $password) {

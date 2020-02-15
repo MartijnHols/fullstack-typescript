@@ -51,7 +51,7 @@ const rateLimitBurstDirective = createRateLimitDirective(config)
 // Big enough not to cap locations with a lot of users, but not too big to avoid damage
 const rateLimitSustainedDirective = createRateLimitDirective(config)
 
-const HEADER_NAME = 'authorization'
+const HEADER_NAME = 'sessionid'
 
 export interface ApolloServerContext {
   req: express.Request
@@ -81,8 +81,20 @@ const createApolloServer = ({
       rateLimitSustained: rateLimitSustainedDirective,
     },
     subscriptions: {
-      onConnect: (connectionParams, webSocket) => {
-        // console.log('NEW_CONNECTION', connectionParams, webSocket)
+      onConnect: async ({ sessionId }: { sessionId?: string }) => {
+        if (sessionId) {
+          const session = await Session.findOne({
+            where: {
+              uniqueId: sessionId,
+            },
+          })
+          if (!session) {
+            throw new Error('Session expired')
+          }
+          return { session }
+        }
+
+        throw new Error('You must be logged in to connect')
       },
     },
     validationRules: [depthLimit(10)],
